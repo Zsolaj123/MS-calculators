@@ -59,18 +59,18 @@
 	// Symbol set options
 	const symbolSetOptions = [
 		{ value: 'classic', label: 'Klasszikus' },
-		{ value: 'modern', label: 'Modern' },
 		{ value: 'geometric', label: 'Geometriai' },
-		{ value: 'abstract', label: 'Absztrakt' },
-		{ value: 'simple', label: 'Egyszerű' },
-		{ value: 'complex', label: 'Komplex' }
+		{ value: 'lines', label: 'Vonalak' },
+		{ value: 'arrows', label: 'Nyilak' },
+		{ value: 'unicode', label: 'Unicode' },
+		{ value: 'unicode-extended', label: 'Unicode Kibővített' }
 	] as const;
 
 	function changeColorScheme(scheme: 'blue' | 'green' | 'purple' | 'teal') {
 		sdmtStore.setColorScheme(scheme);
 	}
 
-	function changeSymbolSet(set: 'classic' | 'modern' | 'geometric' | 'abstract' | 'simple' | 'complex') {
+	function changeSymbolSet(set: 'classic' | 'geometric' | 'lines' | 'arrows' | 'unicode' | 'unicode-extended') {
 		sdmtStore.setSymbolSet(set);
 		sdmtStore.generateKey(); // Regenerate key with new symbols
 	}

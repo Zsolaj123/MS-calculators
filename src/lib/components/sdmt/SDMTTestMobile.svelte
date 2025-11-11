@@ -84,6 +84,16 @@
 		};
 		return colorClasses[colorScheme];
 	});
+
+	const symbolColorClass = $derived.by(() => {
+		const colorClasses = {
+			blue: 'text-neuratos-blue-600 dark:text-neuratos-blue-400',
+			green: 'text-green-600 dark:text-green-400',
+			purple: 'text-purple-600 dark:text-purple-400',
+			teal: 'text-teal-600 dark:text-teal-400'
+		};
+		return colorClasses[colorScheme];
+	});
 </script>
 
 <div class="sdmt-mobile-container" class:dark={theme === 'dark'}>
@@ -140,7 +150,7 @@
 		{/if}
 
 		{#if currentSymbol}
-			<div class="symbol-display">
+			<div class="symbol-display {symbolColorClass}">
 				{@html currentSymbol.svgHtml}
 			</div>
 		{:else}
@@ -164,21 +174,6 @@
 				</button>
 			{/each}
 		</div>
-
-		<!-- Pause Button (only for actual test) -->
-		{#if !isPractice}
-			<button
-				type="button"
-				onclick={togglePause}
-				class="pause-button"
-			>
-				{#if isPaused}
-					▶️ Folytatás
-				{:else}
-					⏸️ Szünet
-				{/if}
-			</button>
-		{/if}
 	</div>
 </div>
 
@@ -229,6 +224,29 @@
 
 	.key-symbol :global(svg) {
 		@apply w-full h-full;
+	}
+
+	/* Color scheme for symbols in key */
+	.bg-neuratos-blue-50 .key-symbol :global(svg),
+	.bg-blue-50 .key-symbol :global(svg),
+	.dark .bg-neuratos-blue-900 .key-symbol :global(svg),
+	.dark .bg-blue-900 .key-symbol :global(svg) {
+		@apply text-neuratos-blue-600 dark:text-neuratos-blue-400;
+	}
+
+	.bg-green-50 .key-symbol :global(svg),
+	.dark .bg-green-900 .key-symbol :global(svg) {
+		@apply text-green-600 dark:text-green-400;
+	}
+
+	.bg-purple-50 .key-symbol :global(svg),
+	.dark .bg-purple-900 .key-symbol :global(svg) {
+		@apply text-purple-600 dark:text-purple-400;
+	}
+
+	.bg-teal-50 .key-symbol :global(svg),
+	.dark .bg-teal-900 .key-symbol :global(svg) {
+		@apply text-teal-600 dark:text-teal-400;
 	}
 
 	.key-digit {
@@ -357,23 +375,14 @@
 	}
 
 	.keypad-button {
-		@apply text-white text-lg font-bold;
+		@apply text-white text-3xl font-black;
 		@apply transition-all duration-100;
 		@apply disabled:opacity-50 disabled:cursor-not-allowed;
 		@apply focus:outline-none;
 		@apply active:brightness-110;
 		@apply border border-white border-opacity-10;
 		height: 100%;
-	}
-
-	.pause-button {
-		@apply w-full py-3 px-4;
-		@apply bg-gray-200 dark:bg-gray-700;
-		@apply text-gray-800 dark:text-gray-200;
-		@apply font-semibold text-sm;
-		@apply transition-all duration-150;
-		@apply focus:outline-none;
-		@apply active:brightness-95;
+		text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 	}
 
 	/* Pulse animation for timer warning */
