@@ -2,6 +2,9 @@
 	import { sdmtStore } from '$lib/stores/sdmt.svelte';
 	import SDMTTestMobile from '$lib/components/sdmt/SDMTTestMobile.svelte';
 	import SDMTResults from '$lib/components/sdmt/SDMTResults.svelte';
+	import LanguageSwitcher from '$lib/components/common/LanguageSwitcher.svelte';
+	import { t, tArray } from '$lib/utils/i18n';
+	import { sdmt } from '$lib/data/i18n/sdmt';
 	import { onMount } from 'svelte';
 
 	let currentMode = $derived(sdmtStore.currentMode);
@@ -50,20 +53,20 @@
 
 	// Color scheme options
 	const colorSchemeOptions = [
-		{ value: 'blue', label: 'Kék', color: 'bg-blue-500' },
-		{ value: 'green', label: 'Zöld', color: 'bg-green-500' },
-		{ value: 'purple', label: 'Lila', color: 'bg-purple-500' },
-		{ value: 'teal', label: 'Türkiz', color: 'bg-teal-500' }
+		{ value: 'blue', label: sdmt.colorSchemes.blue, color: 'bg-blue-500' },
+		{ value: 'green', label: sdmt.colorSchemes.green, color: 'bg-green-500' },
+		{ value: 'purple', label: sdmt.colorSchemes.purple, color: 'bg-purple-500' },
+		{ value: 'teal', label: sdmt.colorSchemes.teal, color: 'bg-teal-500' }
 	] as const;
 
 	// Symbol set options
 	const symbolSetOptions = [
-		{ value: 'classic', label: 'Klasszikus' },
-		{ value: 'geometric', label: 'Geometriai' },
-		{ value: 'lines', label: 'Vonalak' },
-		{ value: 'arrows', label: 'Nyilak' },
-		{ value: 'unicode', label: 'Unicode' },
-		{ value: 'unicode-extended', label: 'Unicode Kibővített' }
+		{ value: 'classic', label: sdmt.symbolSets.classic },
+		{ value: 'geometric', label: sdmt.symbolSets.geometric },
+		{ value: 'lines', label: sdmt.symbolSets.lines },
+		{ value: 'arrows', label: sdmt.symbolSets.arrows },
+		{ value: 'unicode', label: sdmt.symbolSets.unicode },
+		{ value: 'unicode-extended', label: sdmt.symbolSets.unicodeExtended }
 	] as const;
 
 	function changeColorScheme(scheme: 'blue' | 'green' | 'purple' | 'teal') {
@@ -81,54 +84,56 @@
 </script>
 
 <svelte:head>
-	<title>SDMT - Symbol Digit Modalities Test - Neuratos MS</title>
+	<title>{t(sdmt.pageTitle)}</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
 	<meta name="theme-color" content="#2563eb" />
 	<meta name="mobile-web-app-capable" content="yes" />
 	<meta name="apple-mobile-web-app-capable" content="yes" />
 	<meta name="apple-mobile-web-app-status-bar-style" content="default" />
-	<meta name="description" content="Symbol Digit Modalities Test - Kognitív feldolgozási sebesség értékelése" />
+	<meta name="description" content={t(sdmt.pageDescription)} />
 </svelte:head>
 
 {#if showInstructions}
 	<div class="instructions-container">
 		<div class="instructions-card">
-			<h1 class="title">SDMT Teszt</h1>
-			<p class="subtitle">Symbol Digit Modalities Test</p>
+			<div class="header-with-language">
+				<div>
+					<h1 class="title">{t(sdmt.testTitle)}</h1>
+					<p class="subtitle">{t(sdmt.testSubtitle)}</p>
+				</div>
+				<LanguageSwitcher />
+			</div>
 
 			<div class="info-section">
-				<h2 class="info-title">🎯 A teszt célja</h2>
+				<h2 class="info-title">{t(sdmt.purposeTitle)}</h2>
 				<p class="info-text">
-					Az SDMT a feldolgozási sebességet és a vizuális munkamemóriát méri.
-					A képernyő tetején 9 szimbólum látható számokkal. A középen megjelenő
-					szimbólumhoz kell kiválasztani a megfelelő számot az alsó billentyűzeten.
+					{t(sdmt.purposeText)}
 				</p>
 			</div>
 
 			<div class="info-section">
-				<h2 class="info-title">📋 Utasítások</h2>
+				<h2 class="info-title">{t(sdmt.instructionsTitle)}</h2>
 				<ul class="info-list">
-					<li>Nézd meg a felső kulcsot - minden szimbólumhoz tartozik egy szám (1-9)</li>
-					<li>A középen megjelenik egy nagyméretű szimbólum</li>
-					<li>Válaszd ki a megfelelő számot az alsó billentyűzeten</li>
-					<li>Dolgozz gyorsan, de pontosan!</li>
+					{#each tArray(sdmt.instructionsList) as instruction, idx (idx)}
+						<li>{instruction}</li>
+					{/each}
 				</ul>
 			</div>
 
 			<!-- Demographics Section -->
 			<div class="demographics-section">
-				<h2 class="info-title">👤 Demográfiai adatok (Z-score számításhoz)</h2>
+				<h2 class="info-title">{t(sdmt.demographicsTitle)}</h2>
 				<p class="info-text text-xs mb-3">
-					Opcionális: Add meg az adatokat a BICAMS z-score számításához
+					{t(sdmt.demographicsOptional)}
 				</p>
 
 				<div class="demo-group">
-					<label class="demo-label" for="age-input">Életkor:</label>
+					<label class="demo-label" for="age-input">{t(sdmt.ageLabel)}</label>
 					<input
 						id="age-input"
 						type="number"
 						bind:value={age}
-						placeholder="pl. 35"
+						placeholder={t(sdmt.agePlaceholder)}
 						class="demo-input"
 						min="18"
 						max="100"
@@ -136,12 +141,12 @@
 				</div>
 
 				<div class="demo-group">
-					<label class="demo-label" for="education-input">Iskolai végzettség (évek):</label>
+					<label class="demo-label" for="education-input">{t(sdmt.educationLabel)}</label>
 					<input
 						id="education-input"
 						type="number"
 						bind:value={education}
-						placeholder="pl. 16"
+						placeholder={t(sdmt.educationPlaceholder)}
 						class="demo-input"
 						min="0"
 						max="25"
@@ -149,7 +154,7 @@
 				</div>
 
 				<div class="demo-group">
-					<label class="demo-label" id="gender-label">Nem:</label>
+					<label class="demo-label" id="gender-label">{t(sdmt.genderLabel)}</label>
 					<div class="gender-options" role="group" aria-labelledby="gender-label">
 						<button
 							onclick={() => (gender = 'male')}
@@ -157,7 +162,7 @@
 							type="button"
 							aria-pressed={gender === 'male'}
 						>
-							Férfi
+							{t(sdmt.genderMale)}
 						</button>
 						<button
 							onclick={() => (gender = 'female')}
@@ -165,7 +170,7 @@
 							type="button"
 							aria-pressed={gender === 'female'}
 						>
-							Nő
+							{t(sdmt.genderFemale)}
 						</button>
 					</div>
 				</div>
@@ -173,10 +178,10 @@
 
 			<!-- Settings Section -->
 			<div class="settings-section">
-				<h2 class="info-title">⚙️ Beállítások</h2>
+				<h2 class="info-title">{t(sdmt.settingsTitle)}</h2>
 
 				<div class="setting-group">
-					<label class="setting-label" id="color-scheme-label">Színséma:</label>
+					<label class="setting-label" id="color-scheme-label">{t(sdmt.colorSchemeLabel)}</label>
 					<div class="color-options" role="group" aria-labelledby="color-scheme-label">
 						{#each colorSchemeOptions as option (option.value)}
 							<button
@@ -186,14 +191,14 @@
 								aria-pressed={option.value === colorScheme}
 							>
 								<div class="color-circle {option.color}"></div>
-								<span>{option.label}</span>
+								<span>{t(option.label)}</span>
 							</button>
 						{/each}
 					</div>
 				</div>
 
 				<div class="setting-group">
-					<label class="setting-label" id="symbol-set-label">Szimbólumkészlet:</label>
+					<label class="setting-label" id="symbol-set-label">{t(sdmt.symbolSetLabel)}</label>
 					<div class="symbol-set-options" role="group" aria-labelledby="symbol-set-label">
 						{#each symbolSetOptions as option (option.value)}
 							<button
@@ -202,7 +207,7 @@
 								type="button"
 								aria-pressed={option.value === symbolSet}
 							>
-								{option.label}
+								{t(option.label)}
 							</button>
 						{/each}
 					</div>
@@ -210,30 +215,28 @@
 
 				<div class="setting-group">
 					<button onclick={randomizeSymbols} class="randomize-button">
-						🔀 Szimbólumok keverése
+						{t(sdmt.randomizeButton)}
 					</button>
 				</div>
 			</div>
 
 			<div class="practice-section">
-				<h2 class="info-title">🎓 Gyakorlás</h2>
+				<h2 class="info-title">{t(sdmt.practiceTitle)}</h2>
 				<p class="info-text">
-					Először gyakorolj 10 feladattal, hogy megismerkedj a teszttel.
-					Nincs időkorlát, és látni fogod, hogy helyesen válaszoltál-e.
+					{t(sdmt.practiceText)}
 				</p>
 				<button onclick={startPractice} class="btn btn-secondary btn-large">
-					Gyakorlás indítása
+					{t(sdmt.startPracticeButton)}
 				</button>
 			</div>
 
 			<div class="test-section">
-				<h2 class="info-title">🧪 Teszt</h2>
+				<h2 class="info-title">{t(sdmt.testSectionTitle)}</h2>
 				<p class="info-text">
-					<strong>90 másodperc</strong> alatt válaszolj a lehető legtöbb feladatra.
-					A teszt nem áll meg hibás válasz esetén.
+					<strong>{t(sdmt.testDuration)}</strong> {t(sdmt.testSectionText)}
 				</p>
 				<button onclick={startTest} class="btn btn-primary btn-large">
-					Teszt indítása
+					{t(sdmt.startTestButton)}
 				</button>
 			</div>
 		</div>
@@ -244,7 +247,7 @@
 	<div class="results-wrapper">
 		<SDMTResults />
 		<button onclick={backToMenu} class="btn btn-secondary back-button">
-			🔙 Vissza a menübe
+			{t(sdmt.backToMenu)}
 		</button>
 	</div>
 {/if}
@@ -272,6 +275,12 @@
 		@apply my-6;
 	}
 
+	.header-with-language {
+		@apply flex flex-col sm:flex-row;
+		@apply justify-between items-center;
+		@apply gap-4 mb-8;
+	}
+
 	.title {
 		@apply text-3xl font-bold text-center;
 		@apply text-neuratos-blue-700 dark:text-neuratos-blue-300;
@@ -281,7 +290,6 @@
 	.subtitle {
 		@apply text-center text-sm;
 		@apply text-gray-600 dark:text-gray-400;
-		@apply mb-8;
 	}
 
 	.info-section {
