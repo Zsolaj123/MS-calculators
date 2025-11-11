@@ -347,21 +347,23 @@
 		@apply flex-shrink-0 px-0 pb-0 pt-2;
 		@apply bg-white dark:bg-gray-800;
 		@apply border-t-2 border-gray-200 dark:border-gray-700;
+		max-height: 33vh;
 	}
 
 	.keypad-grid {
 		@apply grid grid-cols-3 gap-0 mb-2;
 		@apply w-full;
+		height: calc(33vh - 3rem);
 	}
 
 	.keypad-button {
-		@apply aspect-square;
 		@apply text-white text-lg font-bold;
 		@apply transition-all duration-100;
 		@apply disabled:opacity-50 disabled:cursor-not-allowed;
 		@apply focus:outline-none;
 		@apply active:brightness-110;
 		@apply border border-white border-opacity-10;
+		height: 100%;
 	}
 
 	.pause-button {
