@@ -1,168 +1,31 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { t } from '$lib/utils/i18n';
+	import { landing, calculatorCards } from '$lib/data/i18n/landing';
+	import LanguageSwitcher from '$lib/components/common/LanguageSwitcher.svelte';
+	import type { CalculatorCard } from '$lib/data/i18n/types';
 
-	interface Calculator {
-		id: string;
-		name: string;
-		shortName: string;
-		icon: string;
-		description: string;
-		category: 'cognitive' | 'disability' | 'functional';
-		status: 'available' | 'coming-soon';
-		route?: string;
-		features: string[];
-	}
-
-	const calculators: Calculator[] = [
-		{
-			id: 'edss',
-			name: 'EDSS - Kibővített Rokkantsági Állapot Skála',
-			shortName: 'EDSS',
-			icon: '🎯',
-			description: 'A sclerosis multiplex által okozott fogyatékosság standardizált értékelése 0.0-tól 10.0-ig.',
-			category: 'disability',
-			status: 'available',
-			route: '/edss',
-			features: [
-				'7 funkcionális rendszer értékelése',
-				'Járóképesség mérése',
-				'Automatikus EDSS számítás',
-				'Részletes interpretáció',
-				'Exportálható eredmények'
-			]
-		},
-		{
-			id: 'sdmt',
-			name: 'SDMT - Symbol Digit Modalities Test',
-			shortName: 'SDMT',
-			icon: '🧠',
-			description: 'Feldolgozási sebesség és vizuális munkamemória értékelése szimbólum-szám párosítással. Reszponzív design minden eszközre.',
-			category: 'cognitive',
-			status: 'available',
-			route: '/sdmt',
-			features: [
-				'90 másodperces teszt',
-				'Gyakorló mód',
-				'BICAMS z-score normalizálás',
-				'Többféle szimbólumkészlet',
-				'Testreszabható beállítások',
-				'Mobil és tablet optimalizált'
-			]
-		},
-		{
-			id: 'pasat',
-			name: 'PASAT - Paced Auditory Serial Addition Test',
-			shortName: 'PASAT',
-			icon: '🔢',
-			description: 'Hallási munkamemória és információfeldolgozási sebesség mérése ritmusos számösszeadással.',
-			category: 'cognitive',
-			status: 'coming-soon',
-			features: [
-				'PASAT-3 és PASAT-2',
-				'Hallási stimulus',
-				'BICAMS normák',
-				'Automatikus pontozás',
-				'Progresszív nehézség'
-			]
-		},
-		{
-			id: 'bvmt',
-			name: 'BVMT-R - Brief Visuospatial Memory Test',
-			shortName: 'BVMT-R',
-			icon: '👁️',
-			description: 'Vizuális tanulás és emlékezet értékelése geometrikus figurák segítségével.',
-			category: 'cognitive',
-			status: 'coming-soon',
-			features: [
-				'3 tanulási trial',
-				'Késleltetett felidézés',
-				'Felismerési teszt',
-				'BICAMS kompatibilis',
-				'Standardizált pontozás'
-			]
-		},
-		{
-			id: 'cvlt',
-			name: 'CVLT-II - California Verbal Learning Test',
-			shortName: 'CVLT-II',
-			icon: '📝',
-			description: 'Verbális tanulás és emlékezet mélyreható értékelése szólisták segítségével.',
-			category: 'cognitive',
-			status: 'coming-soon',
-			features: [
-				'Verbális tanulás görbe',
-				'Interferencia hatás',
-				'Hosszú távú megtartás',
-				'Felismerési teljesítmény',
-				'Részletes analitika'
-			]
-		},
-		{
-			id: 'msfc',
-			name: 'MSFC - Multiple Sclerosis Functional Composite',
-			shortName: 'MSFC',
-			icon: '🏃',
-			description: 'Komplex funkcionális értékelés láb-, kéz- és kognitív funkciók mérésével.',
-			category: 'functional',
-			status: 'coming-soon',
-			features: [
-				'9-Hole Peg Test',
-				'Timed 25-Foot Walk',
-				'PASAT-3 integráció',
-				'Z-score kalkuláció',
-				'Longitudinális követés'
-			]
-		},
-		{
-			id: 't25fw',
-			name: 'T25FW - Timed 25-Foot Walk',
-			shortName: 'T25FW',
-			icon: '🚶',
-			description: 'Járási sebesség és mobilitás objektív mérése 25 láb távolságon.',
-			category: 'functional',
-			status: 'coming-soon',
-			features: [
-				'Egyszerű időmérés',
-				'Ismételt mérések',
-				'Segédeszköz rögzítése',
-				'Átlag kalkuláció',
-				'Normatív adatok'
-			]
-		},
-		{
-			id: '9hpt',
-			name: '9HPT - Nine-Hole Peg Test',
-			shortName: '9HPT',
-			icon: '✋',
-			description: 'Felső végtag funkció és finommotoros ügyesség értékelése.',
-			category: 'functional',
-			status: 'coming-soon',
-			features: [
-				'Bal és jobb kéz külön',
-				'Időmérés automatizálás',
-				'Statisztikai elemzés',
-				'Longitudinális trend',
-				'MSFC kompatibilis'
-			]
-		}
-	];
+	// Icon mapping for calculator cards
+	const calculatorIcons: Record<string, string> = {
+		edss: '🎯',
+		sdmt: '🧠',
+		pasat: '🔢',
+		bvmt: '👁️',
+		cvlt: '📝',
+		msfc: '🏃',
+		t25fw: '🚶',
+		'9hpt': '✋'
+	};
 
 	let selectedCategory = $state<'all' | 'cognitive' | 'disability' | 'functional'>('all');
 
 	const filteredCalculators = $derived(
 		selectedCategory === 'all'
-			? calculators
-			: calculators.filter((calc) => calc.category === selectedCategory)
+			? calculatorCards
+			: calculatorCards.filter((calc) => calc.category === selectedCategory)
 	);
 
-	const categoryLabels = {
-		all: 'Összes',
-		cognitive: 'Kognitív',
-		disability: 'Fogyatékosság',
-		functional: 'Funkcionális'
-	};
-
-	function navigateToCalculator(calc: Calculator) {
+	function navigateToCalculator(calc: CalculatorCard) {
 		if (calc.status === 'available' && calc.route) {
 			goto(calc.route);
 		}
@@ -170,24 +33,23 @@
 </script>
 
 <svelte:head>
-	<title>Neuratos MS Calculators - Szakmai Eszközök</title>
-	<meta
-		name="description"
-		content="Komplex MS értékelő eszközök: EDSS, SDMT, PASAT, BVMT-R, CVLT-II, MSFC és további tesztek."
-	/>
+	<title>{t(landing.title)}</title>
+	<meta name="description" content={t(landing.description)} />
 </svelte:head>
 
 <div class="demo-container">
 	<!-- Hero Section -->
 	<div class="hero-section">
 		<div class="hero-content">
-			<h1 class="hero-title">
-				<span class="hero-icon">🧬</span>
-				Neuratos MS™ Calculators
-			</h1>
+			<div class="hero-header">
+				<h1 class="hero-title">
+					<span class="hero-icon">🧬</span>
+					Neuratos MS™ Calculators
+				</h1>
+				<LanguageSwitcher />
+			</div>
 			<p class="hero-subtitle">
-				Átfogó Multiple Sclerosis értékelő eszközök kognitív, fogyatékossági és funkcionális
-				tesztek szakmai használatára
+				{t(landing.subtitle)}
 			</p>
 			<div class="hero-badges">
 				<span class="badge badge-primary">Svelte 5</span>
@@ -201,17 +63,35 @@
 	<!-- Category Filter -->
 	<div class="filter-section">
 		<div class="filter-container">
-			<p class="filter-label">Kategória szűrés:</p>
 			<div class="filter-buttons">
-				{#each Object.entries(categoryLabels) as [key, label]}
-					<button
-						class="filter-button"
-						class:active={selectedCategory === key}
-						onclick={() => (selectedCategory = key as typeof selectedCategory)}
-					>
-						{label}
-					</button>
-				{/each}
+				<button
+					class="filter-button"
+					class:active={selectedCategory === 'all'}
+					onclick={() => (selectedCategory = 'all')}
+				>
+					{t(landing.categories.all)}
+				</button>
+				<button
+					class="filter-button"
+					class:active={selectedCategory === 'cognitive'}
+					onclick={() => (selectedCategory = 'cognitive')}
+				>
+					{t(landing.categories.cognitive)}
+				</button>
+				<button
+					class="filter-button"
+					class:active={selectedCategory === 'disability'}
+					onclick={() => (selectedCategory = 'disability')}
+				>
+					{t(landing.categories.disability)}
+				</button>
+				<button
+					class="filter-button"
+					class:active={selectedCategory === 'functional'}
+					onclick={() => (selectedCategory = 'functional')}
+				>
+					{t(landing.categories.functional)}
+				</button>
 			</div>
 		</div>
 	</div>
@@ -223,7 +103,7 @@
 				<div
 					class="calculator-card"
 					class:available={calc.status === 'available'}
-					class:coming-soon={calc.status === 'coming-soon'}
+					class:coming-soon={calc.status === 'comingSoon'}
 					role="button"
 					tabindex="0"
 					onclick={() => navigateToCalculator(calc)}
@@ -235,47 +115,38 @@
 					}}
 				>
 					<div class="card-header">
-						<div class="card-icon">{calc.icon}</div>
+						<div class="card-icon">{calculatorIcons[calc.id]}</div>
 						<div class="card-title-section">
-							<h3 class="card-title">{calc.shortName}</h3>
-							{#if calc.status === 'coming-soon'}
-								<span class="status-badge coming-soon-badge">Hamarosan</span>
+							<h3 class="card-title">{t(calc.shortName)}</h3>
+							{#if calc.status === 'comingSoon'}
+								<span class="status-badge coming-soon-badge">{t(landing.status.comingSoon)}</span>
 							{:else}
-								<span class="status-badge available-badge">Elérhető</span>
+								<span class="status-badge available-badge">{t(landing.status.available)}</span>
 							{/if}
 						</div>
 					</div>
 
-					<h4 class="card-subtitle">{calc.name}</h4>
-					<p class="card-description">{calc.description}</p>
+					<h4 class="card-subtitle">{t(calc.name)}</h4>
+					<p class="card-description">{t(calc.description)}</p>
 
 					<div class="card-features">
-						<p class="features-title">Funkciók:</p>
 						<ul class="features-list">
-							{#each calc.features as feature}
+							{#each calc.features as feature, idx (idx)}
 								<li class="feature-item">
 									<span class="feature-bullet">✓</span>
-									{feature}
+									{t(feature)}
 								</li>
 							{/each}
 						</ul>
 					</div>
 
-					<div class="card-footer">
-						{#if calc.status === 'available'}
-							<button class="card-button">Eszköz kipróbálása →</button>
-						{:else}
-							<button class="card-button disabled" disabled>Fejlesztés alatt</button>
-						{/if}
-					</div>
-
 					<div class="card-category-badge">
 						{#if calc.category === 'cognitive'}
-							<span class="category-tag cognitive">Kognitív</span>
+							<span class="category-tag cognitive">{t(landing.categories.cognitive)}</span>
 						{:else if calc.category === 'disability'}
-							<span class="category-tag disability">Fogyatékosság</span>
+							<span class="category-tag disability">{t(landing.categories.disability)}</span>
 						{:else if calc.category === 'functional'}
-							<span class="category-tag functional">Funkcionális</span>
+							<span class="category-tag functional">{t(landing.categories.functional)}</span>
 						{/if}
 					</div>
 				</div>
@@ -324,8 +195,12 @@
 		@apply max-w-4xl mx-auto text-center;
 	}
 
+	.hero-header {
+		@apply flex flex-col md:flex-row items-center justify-center gap-4 mb-4;
+	}
+
 	.hero-title {
-		@apply text-4xl md:text-5xl font-bold mb-4;
+		@apply text-4xl md:text-5xl font-bold;
 		@apply text-white;
 		@apply flex items-center justify-center gap-4;
 	}
@@ -376,11 +251,7 @@
 
 	.filter-container {
 		@apply max-w-6xl mx-auto;
-		@apply flex flex-col sm:flex-row items-center justify-center gap-4;
-	}
-
-	.filter-label {
-		@apply text-sm font-semibold text-gray-700 dark:text-gray-300;
+		@apply flex items-center justify-center;
 	}
 
 	.filter-buttons {
@@ -479,10 +350,6 @@
 		@apply mb-6 flex-1;
 	}
 
-	.features-title {
-		@apply text-sm font-semibold text-gray-600 dark:text-gray-400 mb-2;
-	}
-
 	.features-list {
 		@apply space-y-1.5;
 	}
@@ -495,24 +362,6 @@
 	.feature-bullet {
 		@apply text-green-600 dark:text-green-400 font-bold;
 		@apply flex-shrink-0;
-	}
-
-	.card-footer {
-		@apply pt-4 border-t border-gray-200 dark:border-gray-700;
-	}
-
-	.card-button {
-		@apply w-full py-3 px-4 rounded-lg;
-		@apply bg-neuratos-blue-600 hover:bg-neuratos-blue-700;
-		@apply text-white font-semibold;
-		@apply transition-all duration-200;
-		@apply focus:outline-none focus:ring-4 focus:ring-neuratos-blue-300;
-		@apply shadow-md hover:shadow-lg;
-	}
-
-	.card-button.disabled {
-		@apply bg-gray-300 dark:bg-gray-600;
-		@apply cursor-not-allowed opacity-50;
 	}
 
 	.card-category-badge {
