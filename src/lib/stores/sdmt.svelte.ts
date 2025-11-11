@@ -85,6 +85,9 @@ function createSDMTStore() {
 		demographics: null,
 		symbolSize: 'medium',
 		symbolSet: 'classic',
+		testMode: 'classic',
+		theme: 'light',
+		colorScheme: 'blue',
 		lastAnswerCorrect: null,
 		lastAnswerTimestamp: null,
 		bicamsResult: null
@@ -101,8 +104,23 @@ function createSDMTStore() {
 		}
 
 		const savedSet = localStorage.getItem('sdmt-symbol-set') as SDMTSymbolSet;
-		if (savedSet && ['classic', 'geometric', 'lines', 'random'].includes(savedSet)) {
+		if (savedSet && ['classic', 'geometric', 'lines', 'arrows', 'unicode', 'unicode-extended', 'random'].includes(savedSet)) {
 			state.symbolSet = savedSet;
+		}
+
+		const savedTestMode = localStorage.getItem('sdmt-test-mode') as SDMTTestMode;
+		if (savedTestMode && ['classic', 'mobile', 'random'].includes(savedTestMode)) {
+			state.testMode = savedTestMode;
+		}
+
+		const savedTheme = localStorage.getItem('sdmt-theme') as SDMTTheme;
+		if (savedTheme && ['light', 'dark'].includes(savedTheme)) {
+			state.theme = savedTheme;
+		}
+
+		const savedColorScheme = localStorage.getItem('sdmt-color-scheme') as SDMTColorScheme;
+		if (savedColorScheme && ['blue', 'green', 'purple', 'teal'].includes(savedColorScheme)) {
+			state.colorScheme = savedColorScheme;
 		}
 	}
 
@@ -153,6 +171,15 @@ function createSDMTStore() {
 		get bicamsResult() {
 			return state.bicamsResult;
 		},
+		get testMode() {
+			return state.testMode;
+		},
+		get theme() {
+			return state.theme;
+		},
+		get colorScheme() {
+			return state.colorScheme;
+		},
 
 		// Actions
 		initialize() {
@@ -188,11 +215,15 @@ function createSDMTStore() {
 		},
 
 		generateKey() {
-			// Get the selected symbol set
-			const selectedSymbols = getSymbolSet(state.symbolSet);
+			// Determine symbol count based on test mode
+			const symbolCount = this.getSymbolCount();
 
-			// Create array of digits 1-9
-			const digits = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+			// Get the selected symbol set
+			const fullSet = getSymbolSet(state.symbolSet);
+			const selectedSymbols = fullSet.slice(0, symbolCount); // 6 or 9 symbols
+
+			// Create array of digits (1-6 or 1-9)
+			const digits = Array.from({ length: symbolCount }, (_, i) => i + 1);
 
 			// Shuffle digits randomly
 			for (let i = digits.length - 1; i > 0; i--) {
@@ -217,26 +248,38 @@ function createSDMTStore() {
 		},
 
 		generatePracticeItems() {
-			// Generate 10 practice items using first 6 symbols
+			// Generate 10 practice items
+			const symbolCount = this.getSymbolCount();
+			const practiceSymbolCount = Math.min(6, symbolCount); // Use up to 6 symbols for practice
+
 			const items = [];
 			for (let i = 0; i < 10; i++) {
-				items.push(Math.floor(Math.random() * 6));
+				items.push(Math.floor(Math.random() * practiceSymbolCount));
 			}
 			state.practiceItems = items;
 			state.currentItemIndex = 0;
 		},
 
 		generateTestItems() {
+			const symbolCount = this.getSymbolCount();
 			const items = [];
 
-			// First 26 items: only symbols 0-5 (first 6 symbols)
-			for (let i = 0; i < 26; i++) {
-				items.push(Math.floor(Math.random() * 6));
-			}
+			if (symbolCount === 6) {
+				// Mobile mode: All items use all 6 symbols
+				for (let i = 0; i < 150; i++) {
+					items.push(Math.floor(Math.random() * 6));
+				}
+			} else {
+				// Classic mode: Progressive difficulty
+				// First 26 items: only symbols 0-5 (first 6 symbols)
+				for (let i = 0; i < 26; i++) {
+					items.push(Math.floor(Math.random() * 6));
+				}
 
-			// Remaining 124 items: all symbols 0-8
-			for (let i = 0; i < 124; i++) {
-				items.push(Math.floor(Math.random() * 9));
+				// Remaining 124 items: all symbols 0-8
+				for (let i = 0; i < 124; i++) {
+					items.push(Math.floor(Math.random() * 9));
+				}
 			}
 
 			state.testItems = items;
@@ -423,6 +466,48 @@ function createSDMTStore() {
 				large: 80
 			};
 			return sizes[state.symbolSize];
+		},
+
+		// Set test mode preference
+		setTestMode(testMode: SDMTTestMode) {
+			state.testMode = testMode;
+			if (typeof window !== 'undefined') {
+				localStorage.setItem('sdmt-test-mode', testMode);
+			}
+			// Regenerate key based on new mode
+			this.generateKey();
+		},
+
+		// Set theme preference
+		setTheme(theme: SDMTTheme) {
+			state.theme = theme;
+			if (typeof window !== 'undefined') {
+				localStorage.setItem('sdmt-theme', theme);
+				// Apply theme to document
+				if (theme === 'dark') {
+					document.documentElement.classList.add('dark');
+				} else {
+					document.documentElement.classList.remove('dark');
+				}
+			}
+		},
+
+		// Set color scheme preference
+		setColorScheme(colorScheme: SDMTColorScheme) {
+			state.colorScheme = colorScheme;
+			if (typeof window !== 'undefined') {
+				localStorage.setItem('sdmt-color-scheme', colorScheme);
+			}
+		},
+
+		// Check if mobile mode
+		isMobileMode(): boolean {
+			return state.testMode === 'mobile';
+		},
+
+		// Get number of symbols based on mode
+		getSymbolCount(): number {
+			return state.testMode === 'mobile' ? 6 : 9;
 		}
 	};
 }
