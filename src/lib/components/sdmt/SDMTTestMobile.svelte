@@ -409,7 +409,7 @@
 		@apply shadow-md;
 		@apply transition-all duration-150;
 		@apply focus:outline-none focus:ring-2 focus:ring-gray-400;
-		@apply active:scale-98;
+		@apply active:scale-95;
 		@apply max-w-md mx-auto block;
 	}
 
