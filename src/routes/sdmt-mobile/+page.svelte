@@ -122,8 +122,9 @@
 				</p>
 
 				<div class="demo-group">
-					<label class="demo-label">Életkor:</label>
+					<label class="demo-label" for="age-input">Életkor:</label>
 					<input
+						id="age-input"
 						type="number"
 						bind:value={age}
 						placeholder="pl. 35"
@@ -134,8 +135,9 @@
 				</div>
 
 				<div class="demo-group">
-					<label class="demo-label">Iskolai végzettség (évek):</label>
+					<label class="demo-label" for="education-input">Iskolai végzettség (évek):</label>
 					<input
+						id="education-input"
 						type="number"
 						bind:value={education}
 						placeholder="pl. 16"
@@ -146,17 +148,21 @@
 				</div>
 
 				<div class="demo-group">
-					<label class="demo-label">Nem:</label>
-					<div class="gender-options">
+					<label class="demo-label" id="gender-label">Nem:</label>
+					<div class="gender-options" role="group" aria-labelledby="gender-label">
 						<button
 							onclick={() => (gender = 'male')}
 							class="gender-button {gender === 'male' ? 'active' : ''}"
+							type="button"
+							aria-pressed={gender === 'male'}
 						>
 							Férfi
 						</button>
 						<button
 							onclick={() => (gender = 'female')}
 							class="gender-button {gender === 'female' ? 'active' : ''}"
+							type="button"
+							aria-pressed={gender === 'female'}
 						>
 							Nő
 						</button>
@@ -169,12 +175,14 @@
 				<h2 class="info-title">⚙️ Beállítások</h2>
 
 				<div class="setting-group">
-					<label class="setting-label">Színséma:</label>
-					<div class="color-options">
-						{#each colorSchemeOptions as option}
+					<label class="setting-label" id="color-scheme-label">Színséma:</label>
+					<div class="color-options" role="group" aria-labelledby="color-scheme-label">
+						{#each colorSchemeOptions as option (option.value)}
 							<button
 								onclick={() => changeColorScheme(option.value)}
 								class="color-option {option.value === colorScheme ? 'active' : ''}"
+								type="button"
+								aria-pressed={option.value === colorScheme}
 							>
 								<div class="color-circle {option.color}"></div>
 								<span>{option.label}</span>
@@ -184,12 +192,14 @@
 				</div>
 
 				<div class="setting-group">
-					<label class="setting-label">Szimbólumkészlet:</label>
-					<div class="symbol-set-options">
-						{#each symbolSetOptions as option}
+					<label class="setting-label" id="symbol-set-label">Szimbólumkészlet:</label>
+					<div class="symbol-set-options" role="group" aria-labelledby="symbol-set-label">
+						{#each symbolSetOptions as option (option.value)}
 							<button
 								onclick={() => changeSymbolSet(option.value)}
 								class="symbol-set-option {option.value === symbolSet ? 'active' : ''}"
+								type="button"
+								aria-pressed={option.value === symbolSet}
 							>
 								{option.label}
 							</button>
