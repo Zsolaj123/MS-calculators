@@ -13,9 +13,13 @@
 	let currentIndex = $derived(sdmtStore.currentItemIndex);
 	let theme = $derived(sdmtStore.theme);
 	let colorScheme = $derived(sdmtStore.colorScheme);
+	let symbolSet = $derived(sdmtStore.symbolSet);
 
 	// Generate button array based on symbol count
 	let buttons = $derived(Array.from({ length: symbolCount }, (_, i) => i + 1));
+
+	// Settings menu state
+	let showSettings = $state(false);
 
 	// Format time left as MM:SS
 	function formatTime(seconds: number): string {
@@ -85,11 +89,51 @@
 		};
 		return colorClasses[colorScheme];
 	});
+
+	// Color scheme options
+	const colorSchemeOptions = [
+		{ value: 'blue', label: 'Kék', color: 'bg-blue-500' },
+		{ value: 'green', label: 'Zöld', color: 'bg-green-500' },
+		{ value: 'purple', label: 'Lila', color: 'bg-purple-500' },
+		{ value: 'teal', label: 'Türkiz', color: 'bg-teal-500' }
+	];
+
+	// Symbol set options
+	const symbolSetOptions = [
+		{ value: 'classic', label: 'Klasszikus' },
+		{ value: 'modern', label: 'Modern' },
+		{ value: 'geometric', label: 'Geometriai' },
+		{ value: 'abstract', label: 'Absztrakt' },
+		{ value: 'simple', label: 'Egyszerű' },
+		{ value: 'complex', label: 'Komplex' }
+	];
+
+	function changeColorScheme(scheme: typeof colorScheme) {
+		sdmtStore.setColorScheme(scheme);
+		showSettings = false;
+	}
+
+	function changeSymbolSet(set: typeof symbolSet) {
+		sdmtStore.setSymbolSet(set);
+		sdmtStore.generateKey(); // Regenerate key with new symbols
+		showSettings = false;
+	}
+
+	function randomizeSymbols() {
+		sdmtStore.generateKey(); // This already randomizes the mapping
+		showSettings = false;
+	}
 </script>
 
 <div class="sdmt-mobile-container" class:dark={theme === 'dark'}>
 	<!-- Top Section: Symbol Key -->
 	<div class="symbol-key-section">
+		<div class="key-header-row">
+			<h3 class="key-title">Szimbólumok</h3>
+			<button onclick={() => (showSettings = !showSettings)} class="settings-button">
+				⚙️
+			</button>
+		</div>
 		<div class="key-grid">
 			{#each symbolDigitKey as item (item.symbolIndex)}
 				<div class="key-item {keyColorClass}">
@@ -103,6 +147,57 @@
 			{/each}
 		</div>
 	</div>
+
+	<!-- Settings Panel -->
+	{#if showSettings}
+		<div class="settings-overlay" onclick={() => (showSettings = false)}>
+			<div class="settings-panel" onclick={(e) => e.stopPropagation()}>
+				<h3 class="settings-title">⚙️ Beállítások</h3>
+
+				<!-- Color Scheme -->
+				<div class="setting-group">
+					<label class="setting-label">Színséma:</label>
+					<div class="color-options">
+						{#each colorSchemeOptions as option}
+							<button
+								onclick={() => changeColorScheme(option.value)}
+								class="color-option {option.value === colorScheme ? 'active' : ''}"
+							>
+								<div class="color-circle {option.color}"></div>
+								<span>{option.label}</span>
+							</button>
+						{/each}
+					</div>
+				</div>
+
+				<!-- Symbol Set -->
+				<div class="setting-group">
+					<label class="setting-label">Szimbólumkészlet:</label>
+					<div class="symbol-set-options">
+						{#each symbolSetOptions as option}
+							<button
+								onclick={() => changeSymbolSet(option.value)}
+								class="symbol-set-option {option.value === symbolSet ? 'active' : ''}"
+							>
+								{option.label}
+							</button>
+						{/each}
+					</div>
+				</div>
+
+				<!-- Randomize Button -->
+				<div class="setting-group">
+					<button onclick={randomizeSymbols} class="randomize-button {buttonColorClass}">
+						🔀 Szimbólumok keverése
+					</button>
+				</div>
+
+				<button onclick={() => (showSettings = false)} class="close-settings-button">
+					Bezárás
+				</button>
+			</div>
+		</div>
+	{/if}
 
 	<!-- Status Bar -->
 	<div class="status-bar">
@@ -207,25 +302,40 @@
 
 	/* Top Section: Symbol Key */
 	.symbol-key-section {
-		@apply flex-shrink-0 px-2 py-3;
+		@apply flex-shrink-0 px-3 py-4;
 		@apply bg-white dark:bg-gray-800;
 		@apply border-b-2 border-gray-200 dark:border-gray-700;
 		@apply shadow-sm;
 	}
 
+	.key-header-row {
+		@apply flex items-center justify-between mb-2;
+	}
+
+	.key-title {
+		@apply text-sm font-semibold text-gray-700 dark:text-gray-300;
+	}
+
+	.settings-button {
+		@apply text-2xl p-1;
+		@apply hover:scale-110 active:scale-95;
+		@apply transition-transform duration-150;
+	}
+
 	.key-grid {
-		@apply grid grid-cols-9 gap-1;
+		@apply grid grid-cols-9 gap-2;
 		@apply max-w-screen-lg mx-auto;
 	}
 
 	.key-item {
 		@apply flex flex-col items-center justify-center;
-		@apply rounded-md p-1;
+		@apply rounded-lg p-2;
 		@apply transition-colors duration-150;
+		@apply border border-gray-200 dark:border-gray-600;
 	}
 
 	.key-symbol {
-		@apply w-6 h-6 mb-0.5;
+		@apply w-10 h-10 mb-1;
 	}
 
 	.key-symbol :global(svg) {
@@ -233,8 +343,10 @@
 	}
 
 	.key-digit {
-		@apply text-xs font-bold;
-		@apply text-gray-700 dark:text-gray-300;
+		@apply text-base font-bold;
+		@apply text-gray-800 dark:text-gray-200;
+		@apply bg-white dark:bg-gray-700;
+		@apply rounded px-2 py-0.5;
 	}
 
 	/* Status Bar */
@@ -273,13 +385,17 @@
 	/* Middle Section: Current Symbol */
 	.current-symbol-section {
 		@apply flex-1 relative flex items-center justify-center;
-		@apply px-4 py-8;
+		@apply px-6 py-6;
 		@apply overflow-hidden;
+		@apply bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800;
 	}
 
 	.symbol-display {
-		@apply w-full max-w-[280px] aspect-square;
+		@apply w-full max-w-[240px] aspect-square;
 		@apply flex items-center justify-center;
+		@apply bg-white dark:bg-gray-800;
+		@apply rounded-2xl shadow-xl;
+		@apply p-8;
 		animation: symbolFadeIn 200ms ease-out;
 	}
 
@@ -380,25 +496,26 @@
 
 	/* Bottom Section: Keypad */
 	.keypad-section {
-		@apply flex-shrink-0 px-4 pb-6 pt-4;
+		@apply flex-shrink-0 px-4 pb-4 pt-3;
 		@apply bg-white dark:bg-gray-800;
 		@apply border-t-2 border-gray-200 dark:border-gray-700;
 		@apply shadow-inner;
 	}
 
 	.keypad-grid {
-		@apply grid grid-cols-3 gap-3 mb-4;
-		@apply max-w-md mx-auto;
+		@apply grid grid-cols-3 gap-2 mb-3;
+		@apply max-w-sm mx-auto;
 	}
 
 	.keypad-button {
-		@apply aspect-square rounded-xl;
-		@apply text-white text-3xl font-bold;
-		@apply shadow-lg;
+		@apply aspect-square rounded-lg;
+		@apply text-white text-2xl font-bold;
+		@apply shadow-md;
 		@apply transition-all duration-100;
 		@apply disabled:opacity-50 disabled:cursor-not-allowed;
-		@apply focus:outline-none focus:ring-4 focus:ring-offset-2;
+		@apply focus:outline-none focus:ring-2 focus:ring-offset-1;
 		@apply active:scale-95;
+		@apply min-h-[60px];
 	}
 
 	.pause-button {
@@ -459,22 +576,124 @@
 		}
 	}
 
+	/* Settings Overlay */
+	.settings-overlay {
+		@apply fixed inset-0 z-50;
+		@apply bg-black bg-opacity-50;
+		@apply flex items-end;
+		animation: fadeIn 200ms ease-out;
+	}
+
+	.settings-panel {
+		@apply w-full bg-white dark:bg-gray-800;
+		@apply rounded-t-3xl p-6;
+		@apply max-h-[80vh] overflow-y-auto;
+		animation: slideUp 300ms ease-out;
+	}
+
+	.settings-title {
+		@apply text-2xl font-bold mb-6;
+		@apply text-gray-900 dark:text-gray-100;
+	}
+
+	.setting-group {
+		@apply mb-6;
+	}
+
+	.setting-label {
+		@apply block text-sm font-semibold mb-3;
+		@apply text-gray-700 dark:text-gray-300;
+	}
+
+	.color-options {
+		@apply grid grid-cols-2 gap-3;
+	}
+
+	.color-option {
+		@apply flex items-center gap-3 p-3;
+		@apply bg-gray-50 dark:bg-gray-700;
+		@apply rounded-lg;
+		@apply transition-all duration-150;
+		@apply hover:shadow-md;
+	}
+
+	.color-option.active {
+		@apply bg-blue-50 dark:bg-blue-900;
+		@apply ring-2 ring-blue-500;
+	}
+
+	.color-circle {
+		@apply w-8 h-8 rounded-full;
+		@apply shadow-md;
+	}
+
+	.symbol-set-options {
+		@apply grid grid-cols-2 gap-2;
+	}
+
+	.symbol-set-option {
+		@apply p-3 rounded-lg;
+		@apply bg-gray-50 dark:bg-gray-700;
+		@apply text-sm font-medium;
+		@apply transition-all duration-150;
+		@apply hover:shadow-md;
+	}
+
+	.symbol-set-option.active {
+		@apply bg-blue-50 dark:bg-blue-900;
+		@apply ring-2 ring-blue-500;
+	}
+
+	.randomize-button {
+		@apply w-full py-4 px-4 rounded-lg;
+		@apply text-white font-bold text-lg;
+		@apply shadow-lg;
+		@apply transition-all duration-150;
+	}
+
+	.close-settings-button {
+		@apply w-full py-3 px-4 rounded-lg;
+		@apply bg-gray-200 dark:bg-gray-700;
+		@apply text-gray-800 dark:text-gray-200;
+		@apply font-semibold;
+		@apply hover:bg-gray-300 dark:hover:bg-gray-600;
+		@apply transition-colors duration-150;
+	}
+
+	@keyframes fadeIn {
+		from {
+			opacity: 0;
+		}
+		to {
+			opacity: 1;
+		}
+	}
+
+	@keyframes slideUp {
+		from {
+			transform: translateY(100%);
+		}
+		to {
+			transform: translateY(0);
+		}
+	}
+
 	/* Extra small mobile screens */
 	@media (max-width: 360px) {
 		.key-symbol {
-			@apply w-5 h-5;
+			@apply w-8 h-8;
 		}
 
 		.key-digit {
-			@apply text-[10px];
+			@apply text-sm;
 		}
 
 		.keypad-button {
-			@apply text-2xl;
+			@apply text-xl min-h-[50px];
 		}
 
 		.symbol-display {
-			@apply max-w-[220px];
+			@apply max-w-[200px];
 		}
 	}
 
