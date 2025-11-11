@@ -153,7 +153,7 @@ export const calculatorCards: CalculatorCard[] = [
 			en: 'Comprehensive functional assessment measuring leg, arm, and cognitive functions.'
 		},
 		category: 'functional',
-		status: 'comingSoon',
+		status: 'available',
 		route: '/msfc',
 		features: [
 			{
@@ -173,8 +173,8 @@ export const calculatorCards: CalculatorCard[] = [
 				en: 'Z-score calculation (NMSS + European)'
 			},
 			{
-				hu: 'Longitudinális követés',
-				en: 'Longitudinal tracking'
+				hu: 'Időmérő és kézi bevitel mód',
+				en: 'Timer and manual entry modes'
 			}
 		]
 	},
