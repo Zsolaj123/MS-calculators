@@ -108,12 +108,12 @@
 		{ value: 'complex', label: 'Komplex' }
 	];
 
-	function changeColorScheme(scheme: typeof colorScheme) {
+	function changeColorScheme(scheme: 'blue' | 'green' | 'purple' | 'teal') {
 		sdmtStore.setColorScheme(scheme);
 		showSettings = false;
 	}
 
-	function changeSymbolSet(set: typeof symbolSet) {
+	function changeSymbolSet(set: 'classic' | 'modern' | 'geometric' | 'abstract' | 'simple' | 'complex') {
 		sdmtStore.setSymbolSet(set);
 		sdmtStore.generateKey(); // Regenerate key with new symbols
 		showSettings = false;
@@ -221,21 +221,6 @@
 
 	<!-- Middle Section: Current Symbol -->
 	<div class="current-symbol-section">
-		<!-- Visual Feedback Overlay -->
-		{#if lastAnswerCorrect !== null}
-			<div
-				class="feedback-overlay"
-				class:feedback-correct={lastAnswerCorrect}
-				class:feedback-incorrect={!lastAnswerCorrect}
-			>
-				{#if lastAnswerCorrect}
-					<div class="feedback-icon">✓</div>
-				{:else}
-					<div class="feedback-icon">✗</div>
-				{/if}
-			</div>
-		{/if}
-
 		<!-- Pause Overlay -->
 		{#if isPaused}
 			<div class="pause-overlay">
@@ -419,48 +404,6 @@
 		}
 	}
 
-	/* Feedback Overlay */
-	.feedback-overlay {
-		@apply absolute inset-0 z-20 flex items-center justify-center;
-		@apply pointer-events-none;
-		animation: feedbackPulse 400ms ease-in-out;
-	}
-
-	.feedback-correct {
-		@apply bg-green-500 bg-opacity-20;
-	}
-
-	.feedback-incorrect {
-		@apply bg-red-500 bg-opacity-20;
-	}
-
-	.feedback-icon {
-		@apply text-8xl font-bold;
-	}
-
-	.feedback-correct .feedback-icon {
-		@apply text-green-600 dark:text-green-400;
-	}
-
-	.feedback-incorrect .feedback-icon {
-		@apply text-red-600 dark:text-red-400;
-	}
-
-	@keyframes feedbackPulse {
-		0% {
-			opacity: 0;
-			transform: scale(0.8);
-		}
-		50% {
-			opacity: 1;
-			transform: scale(1);
-		}
-		100% {
-			opacity: 0;
-			transform: scale(0.9);
-		}
-	}
-
 	/* Pause Overlay */
 	.pause-overlay {
 		@apply absolute inset-0 z-30 flex items-center justify-center;
@@ -503,31 +446,31 @@
 	}
 
 	.keypad-grid {
-		@apply grid grid-cols-3 gap-2 mb-3;
-		@apply max-w-sm mx-auto;
+		@apply grid grid-cols-3 gap-1.5 mb-3;
+		@apply max-w-xs mx-auto;
 	}
 
 	.keypad-button {
-		@apply aspect-square rounded-lg;
-		@apply text-white text-2xl font-bold;
-		@apply shadow-md;
+		@apply aspect-square rounded;
+		@apply text-white text-sm font-bold;
+		@apply shadow-sm;
 		@apply transition-all duration-100;
 		@apply disabled:opacity-50 disabled:cursor-not-allowed;
-		@apply focus:outline-none focus:ring-2 focus:ring-offset-1;
+		@apply focus:outline-none focus:ring-1 focus:ring-offset-1;
 		@apply active:scale-95;
-		@apply min-h-[60px];
+		@apply h-12 w-12;
 	}
 
 	.pause-button {
-		@apply w-full py-3 px-4 rounded-lg;
+		@apply w-full py-2 px-3 rounded;
 		@apply bg-gray-200 dark:bg-gray-700;
 		@apply text-gray-800 dark:text-gray-200;
-		@apply font-semibold text-sm;
-		@apply shadow-md;
+		@apply font-medium text-xs;
+		@apply shadow-sm;
 		@apply transition-all duration-150;
-		@apply focus:outline-none focus:ring-2 focus:ring-gray-400;
+		@apply focus:outline-none focus:ring-1 focus:ring-gray-400;
 		@apply active:scale-95;
-		@apply max-w-md mx-auto block;
+		@apply max-w-xs mx-auto block;
 	}
 
 	/* Pulse animation for timer warning */
@@ -689,7 +632,7 @@
 		}
 
 		.keypad-button {
-			@apply text-xl min-h-[50px];
+			@apply text-xs h-10 w-10;
 		}
 
 		.symbol-display {
@@ -699,7 +642,6 @@
 
 	/* Reduced motion */
 	@media (prefers-reduced-motion: reduce) {
-		.feedback-overlay,
 		.symbol-display {
 			animation: none;
 		}
