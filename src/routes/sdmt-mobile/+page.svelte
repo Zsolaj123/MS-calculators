@@ -9,8 +9,7 @@
 
 	onMount(() => {
 		sdmtStore.initialize();
-		// Set to 9 symbols by default for mobile (matches reference)
-		sdmtStore.setSymbolCount(9);
+		// Mobile version uses the current symbol set (6 or 9 symbols based on user preference)
 	});
 
 	function startPractice() {
@@ -33,6 +32,7 @@
 	<title>SDMT Mobil Teszt - Neuratos MS</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
 	<meta name="theme-color" content="#2563eb" />
+	<meta name="mobile-web-app-capable" content="yes" />
 	<meta name="apple-mobile-web-app-capable" content="yes" />
 	<meta name="apple-mobile-web-app-status-bar-style" content="default" />
 </svelte:head>
