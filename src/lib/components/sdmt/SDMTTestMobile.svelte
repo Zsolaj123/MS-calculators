@@ -13,13 +13,8 @@
 	let currentIndex = $derived(sdmtStore.currentItemIndex);
 	let theme = $derived(sdmtStore.theme);
 	let colorScheme = $derived(sdmtStore.colorScheme);
-	let symbolSet = $derived(sdmtStore.symbolSet);
-
 	// Generate button array based on symbol count
 	let buttons = $derived(Array.from({ length: symbolCount }, (_, i) => i + 1));
-
-	// Settings menu state
-	let showSettings = $state(false);
 
 	// Format time left as MM:SS
 	function formatTime(seconds: number): string {
@@ -89,51 +84,11 @@
 		};
 		return colorClasses[colorScheme];
 	});
-
-	// Color scheme options
-	const colorSchemeOptions = [
-		{ value: 'blue', label: 'Kék', color: 'bg-blue-500' },
-		{ value: 'green', label: 'Zöld', color: 'bg-green-500' },
-		{ value: 'purple', label: 'Lila', color: 'bg-purple-500' },
-		{ value: 'teal', label: 'Türkiz', color: 'bg-teal-500' }
-	];
-
-	// Symbol set options
-	const symbolSetOptions = [
-		{ value: 'classic', label: 'Klasszikus' },
-		{ value: 'modern', label: 'Modern' },
-		{ value: 'geometric', label: 'Geometriai' },
-		{ value: 'abstract', label: 'Absztrakt' },
-		{ value: 'simple', label: 'Egyszerű' },
-		{ value: 'complex', label: 'Komplex' }
-	];
-
-	function changeColorScheme(scheme: 'blue' | 'green' | 'purple' | 'teal') {
-		sdmtStore.setColorScheme(scheme);
-		showSettings = false;
-	}
-
-	function changeSymbolSet(set: 'classic' | 'modern' | 'geometric' | 'abstract' | 'simple' | 'complex') {
-		sdmtStore.setSymbolSet(set);
-		sdmtStore.generateKey(); // Regenerate key with new symbols
-		showSettings = false;
-	}
-
-	function randomizeSymbols() {
-		sdmtStore.generateKey(); // This already randomizes the mapping
-		showSettings = false;
-	}
 </script>
 
 <div class="sdmt-mobile-container" class:dark={theme === 'dark'}>
 	<!-- Top Section: Symbol Key -->
 	<div class="symbol-key-section">
-		<div class="key-header-row">
-			<h3 class="key-title">Szimbólumok</h3>
-			<button onclick={() => (showSettings = !showSettings)} class="settings-button">
-				⚙️
-			</button>
-		</div>
 		<div class="key-grid">
 			{#each symbolDigitKey as item (item.symbolIndex)}
 				<div class="key-item {keyColorClass}">
@@ -147,57 +102,6 @@
 			{/each}
 		</div>
 	</div>
-
-	<!-- Settings Panel -->
-	{#if showSettings}
-		<div class="settings-overlay" onclick={() => (showSettings = false)}>
-			<div class="settings-panel" onclick={(e) => e.stopPropagation()}>
-				<h3 class="settings-title">⚙️ Beállítások</h3>
-
-				<!-- Color Scheme -->
-				<div class="setting-group">
-					<label class="setting-label">Színséma:</label>
-					<div class="color-options">
-						{#each colorSchemeOptions as option}
-							<button
-								onclick={() => changeColorScheme(option.value)}
-								class="color-option {option.value === colorScheme ? 'active' : ''}"
-							>
-								<div class="color-circle {option.color}"></div>
-								<span>{option.label}</span>
-							</button>
-						{/each}
-					</div>
-				</div>
-
-				<!-- Symbol Set -->
-				<div class="setting-group">
-					<label class="setting-label">Szimbólumkészlet:</label>
-					<div class="symbol-set-options">
-						{#each symbolSetOptions as option}
-							<button
-								onclick={() => changeSymbolSet(option.value)}
-								class="symbol-set-option {option.value === symbolSet ? 'active' : ''}"
-							>
-								{option.label}
-							</button>
-						{/each}
-					</div>
-				</div>
-
-				<!-- Randomize Button -->
-				<div class="setting-group">
-					<button onclick={randomizeSymbols} class="randomize-button {buttonColorClass}">
-						🔀 Szimbólumok keverése
-					</button>
-				</div>
-
-				<button onclick={() => (showSettings = false)} class="close-settings-button">
-					Bezárás
-				</button>
-			</div>
-		</div>
-	{/if}
 
 	<!-- Status Bar -->
 	<div class="status-bar">
@@ -328,10 +232,11 @@
 	}
 
 	.key-digit {
-		@apply text-base font-bold;
-		@apply text-gray-800 dark:text-gray-200;
+		@apply text-xl font-bold;
+		@apply text-gray-900 dark:text-gray-100;
 		@apply bg-white dark:bg-gray-700;
-		@apply rounded px-2 py-0.5;
+		@apply rounded px-2.5 py-1;
+		@apply shadow-sm;
 	}
 
 	/* Status Bar */
@@ -439,38 +344,34 @@
 
 	/* Bottom Section: Keypad */
 	.keypad-section {
-		@apply flex-shrink-0 px-4 pb-4 pt-3;
+		@apply flex-shrink-0 px-0 pb-0 pt-2;
 		@apply bg-white dark:bg-gray-800;
 		@apply border-t-2 border-gray-200 dark:border-gray-700;
-		@apply shadow-inner;
 	}
 
 	.keypad-grid {
-		@apply grid grid-cols-3 gap-1.5 mb-3;
-		@apply max-w-xs mx-auto;
+		@apply grid grid-cols-3 gap-0 mb-2;
+		@apply w-full;
 	}
 
 	.keypad-button {
-		@apply aspect-square rounded;
-		@apply text-white text-sm font-bold;
-		@apply shadow-sm;
+		@apply aspect-square;
+		@apply text-white text-lg font-bold;
 		@apply transition-all duration-100;
 		@apply disabled:opacity-50 disabled:cursor-not-allowed;
-		@apply focus:outline-none focus:ring-1 focus:ring-offset-1;
-		@apply active:scale-95;
-		@apply h-12 w-12;
+		@apply focus:outline-none;
+		@apply active:brightness-110;
+		@apply border border-white border-opacity-10;
 	}
 
 	.pause-button {
-		@apply w-full py-2 px-3 rounded;
+		@apply w-full py-3 px-4;
 		@apply bg-gray-200 dark:bg-gray-700;
 		@apply text-gray-800 dark:text-gray-200;
-		@apply font-medium text-xs;
-		@apply shadow-sm;
+		@apply font-semibold text-sm;
 		@apply transition-all duration-150;
-		@apply focus:outline-none focus:ring-1 focus:ring-gray-400;
-		@apply active:scale-95;
-		@apply max-w-xs mx-auto block;
+		@apply focus:outline-none;
+		@apply active:brightness-95;
 	}
 
 	/* Pulse animation for timer warning */
@@ -628,11 +529,11 @@
 		}
 
 		.key-digit {
-			@apply text-sm;
+			@apply text-lg;
 		}
 
 		.keypad-button {
-			@apply text-xs h-10 w-10;
+			@apply text-base;
 		}
 
 		.symbol-display {

@@ -6,6 +6,13 @@
 
 	let currentMode = $derived(sdmtStore.currentMode);
 	let showInstructions = $state(true);
+	let colorScheme = $derived(sdmtStore.colorScheme);
+	let symbolSet = $derived(sdmtStore.symbolSet);
+
+	// Demographics
+	let age = $state('');
+	let education = $state('');
+	let gender = $state<'male' | 'female' | ''>('');
 
 	onMount(() => {
 		sdmtStore.initialize();
@@ -13,11 +20,25 @@
 	});
 
 	function startPractice() {
+		if (age && education && gender) {
+			sdmtStore.setDemographics({
+				age: parseInt(age),
+				yearsOfEducation: parseInt(education),
+				gender: gender as 'male' | 'female'
+			});
+		}
 		showInstructions = false;
 		sdmtStore.startPractice();
 	}
 
 	function startTest() {
+		if (age && education && gender) {
+			sdmtStore.setDemographics({
+				age: parseInt(age),
+				yearsOfEducation: parseInt(education),
+				gender: gender as 'male' | 'female'
+			});
+		}
 		showInstructions = false;
 		sdmtStore.startTest();
 	}
@@ -25,6 +46,37 @@
 	function backToMenu() {
 		showInstructions = true;
 		sdmtStore.reset();
+	}
+
+	// Color scheme options
+	const colorSchemeOptions = [
+		{ value: 'blue', label: 'Kék', color: 'bg-blue-500' },
+		{ value: 'green', label: 'Zöld', color: 'bg-green-500' },
+		{ value: 'purple', label: 'Lila', color: 'bg-purple-500' },
+		{ value: 'teal', label: 'Türkiz', color: 'bg-teal-500' }
+	] as const;
+
+	// Symbol set options
+	const symbolSetOptions = [
+		{ value: 'classic', label: 'Klasszikus' },
+		{ value: 'modern', label: 'Modern' },
+		{ value: 'geometric', label: 'Geometriai' },
+		{ value: 'abstract', label: 'Absztrakt' },
+		{ value: 'simple', label: 'Egyszerű' },
+		{ value: 'complex', label: 'Komplex' }
+	] as const;
+
+	function changeColorScheme(scheme: 'blue' | 'green' | 'purple' | 'teal') {
+		sdmtStore.setColorScheme(scheme);
+	}
+
+	function changeSymbolSet(set: 'classic' | 'modern' | 'geometric' | 'abstract' | 'simple' | 'complex') {
+		sdmtStore.setSymbolSet(set);
+		sdmtStore.generateKey(); // Regenerate key with new symbols
+	}
+
+	function randomizeSymbols() {
+		sdmtStore.generateKey(); // This already randomizes the mapping
 	}
 </script>
 
@@ -60,6 +112,96 @@
 					<li>Válaszd ki a megfelelő számot az alsó billentyűzeten</li>
 					<li>Dolgozz gyorsan, de pontosan!</li>
 				</ul>
+			</div>
+
+			<!-- Demographics Section -->
+			<div class="demographics-section">
+				<h2 class="info-title">👤 Demográfiai adatok (Z-score számításhoz)</h2>
+				<p class="info-text text-xs mb-3">
+					Opcionális: Add meg az adatokat a BICAMS z-score számításához
+				</p>
+
+				<div class="demo-group">
+					<label class="demo-label">Életkor:</label>
+					<input
+						type="number"
+						bind:value={age}
+						placeholder="pl. 35"
+						class="demo-input"
+						min="18"
+						max="100"
+					/>
+				</div>
+
+				<div class="demo-group">
+					<label class="demo-label">Iskolai végzettség (évek):</label>
+					<input
+						type="number"
+						bind:value={education}
+						placeholder="pl. 16"
+						class="demo-input"
+						min="0"
+						max="25"
+					/>
+				</div>
+
+				<div class="demo-group">
+					<label class="demo-label">Nem:</label>
+					<div class="gender-options">
+						<button
+							onclick={() => (gender = 'male')}
+							class="gender-button {gender === 'male' ? 'active' : ''}"
+						>
+							Férfi
+						</button>
+						<button
+							onclick={() => (gender = 'female')}
+							class="gender-button {gender === 'female' ? 'active' : ''}"
+						>
+							Nő
+						</button>
+					</div>
+				</div>
+			</div>
+
+			<!-- Settings Section -->
+			<div class="settings-section">
+				<h2 class="info-title">⚙️ Beállítások</h2>
+
+				<div class="setting-group">
+					<label class="setting-label">Színséma:</label>
+					<div class="color-options">
+						{#each colorSchemeOptions as option}
+							<button
+								onclick={() => changeColorScheme(option.value)}
+								class="color-option {option.value === colorScheme ? 'active' : ''}"
+							>
+								<div class="color-circle {option.color}"></div>
+								<span>{option.label}</span>
+							</button>
+						{/each}
+					</div>
+				</div>
+
+				<div class="setting-group">
+					<label class="setting-label">Szimbólumkészlet:</label>
+					<div class="symbol-set-options">
+						{#each symbolSetOptions as option}
+							<button
+								onclick={() => changeSymbolSet(option.value)}
+								class="symbol-set-option {option.value === symbolSet ? 'active' : ''}"
+							>
+								{option.label}
+							</button>
+						{/each}
+					</div>
+				</div>
+
+				<div class="setting-group">
+					<button onclick={randomizeSymbols} class="randomize-button">
+						🔀 Szimbólumok keverése
+					</button>
+				</div>
 			</div>
 
 			<div class="practice-section">
@@ -158,6 +300,115 @@
 		@apply text-gray-700 dark:text-gray-300;
 		@apply space-y-2;
 		@apply ml-2;
+	}
+
+	.demographics-section {
+		@apply mb-6;
+		@apply pb-6;
+		@apply border-b border-gray-200 dark:border-gray-700;
+		@apply bg-blue-50 dark:bg-blue-950;
+		@apply rounded-lg p-4;
+	}
+
+	.demo-group {
+		@apply mb-3;
+	}
+
+	.demo-group:last-child {
+		@apply mb-0;
+	}
+
+	.demo-label {
+		@apply block text-sm font-semibold mb-1;
+		@apply text-gray-700 dark:text-gray-300;
+	}
+
+	.demo-input {
+		@apply w-full px-3 py-2 rounded-lg;
+		@apply bg-white dark:bg-gray-800;
+		@apply border-2 border-gray-300 dark:border-gray-600;
+		@apply text-gray-900 dark:text-gray-100;
+		@apply focus:border-blue-500 focus:outline-none;
+	}
+
+	.gender-options {
+		@apply grid grid-cols-2 gap-2;
+	}
+
+	.gender-button {
+		@apply py-2 px-4 rounded-lg;
+		@apply bg-white dark:bg-gray-800;
+		@apply border-2 border-gray-300 dark:border-gray-600;
+		@apply font-medium;
+		@apply transition-all duration-150;
+	}
+
+	.gender-button.active {
+		@apply border-blue-500 bg-blue-100 dark:bg-blue-900;
+	}
+
+	.settings-section {
+		@apply mb-6;
+		@apply pb-6;
+		@apply border-b border-gray-200 dark:border-gray-700;
+		@apply bg-gray-50 dark:bg-gray-900;
+		@apply rounded-lg p-4;
+	}
+
+	.setting-group {
+		@apply mb-4;
+	}
+
+	.setting-group:last-child {
+		@apply mb-0;
+	}
+
+	.setting-label {
+		@apply block text-sm font-semibold mb-2;
+		@apply text-gray-700 dark:text-gray-300;
+	}
+
+	.color-options {
+		@apply grid grid-cols-2 gap-2;
+	}
+
+	.color-option {
+		@apply flex items-center gap-2 p-2;
+		@apply bg-white dark:bg-gray-800;
+		@apply rounded-lg border-2 border-gray-200 dark:border-gray-700;
+		@apply transition-all duration-150;
+		@apply text-sm;
+	}
+
+	.color-option.active {
+		@apply border-blue-500 bg-blue-50 dark:bg-blue-900;
+	}
+
+	.color-circle {
+		@apply w-6 h-6 rounded-full shadow-sm;
+	}
+
+	.symbol-set-options {
+		@apply grid grid-cols-2 gap-2;
+	}
+
+	.symbol-set-option {
+		@apply p-2 rounded-lg;
+		@apply bg-white dark:bg-gray-800;
+		@apply border-2 border-gray-200 dark:border-gray-700;
+		@apply text-sm font-medium;
+		@apply transition-all duration-150;
+	}
+
+	.symbol-set-option.active {
+		@apply border-blue-500 bg-blue-50 dark:bg-blue-900;
+	}
+
+	.randomize-button {
+		@apply w-full py-3 px-4 rounded-lg;
+		@apply bg-neuratos-blue-600 hover:bg-neuratos-blue-700;
+		@apply text-white font-bold;
+		@apply shadow-md;
 	}
 
 	.practice-section,
