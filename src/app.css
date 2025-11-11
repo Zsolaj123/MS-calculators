@@ -1,0 +1,125 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* MS Calculators - Base Styles */
+
+@layer base {
+	:root {
+		/* NEURATOS Brand Colors */
+		--color-primary: #2563eb;
+		--color-primary-hover: #1d4ed8;
+		--color-success: #10b981;
+		--color-warning: #f59e0b;
+		--color-danger: #ef4444;
+		--color-info: #3b82f6;
+
+		/* Touch Targets */
+		--min-touch-target: 44px;
+
+		/* Spacing for mobile */
+		--spacing-mobile: 12px;
+	}
+
+	body {
+		@apply font-sans antialiased;
+		@apply text-gray-900 bg-white;
+	}
+
+	/* Ensure readability */
+	body {
+		font-size: 16px;
+		line-height: 1.6;
+	}
+}
+
+@layer components {
+	/* Touch-friendly buttons */
+	.btn {
+		@apply min-h-[44px] min-w-[44px] px-4 py-2 rounded-lg font-medium;
+		@apply transition-all duration-200 ease-in-out;
+		@apply focus:outline-none focus:ring-2 focus:ring-offset-2;
+	}
+
+	.btn-primary {
+		@apply bg-neuratos-blue-600 text-white hover:bg-neuratos-blue-700;
+		@apply focus:ring-neuratos-blue-500;
+	}
+
+	.btn-secondary {
+		@apply bg-gray-200 text-gray-900 hover:bg-gray-300;
+		@apply focus:ring-gray-400;
+	}
+
+	.btn-success {
+		@apply bg-green-600 text-white hover:bg-green-700;
+		@apply focus:ring-green-500;
+	}
+
+	.btn-danger {
+		@apply bg-red-600 text-white hover:bg-red-700;
+		@apply focus:ring-red-500;
+	}
+
+	/* Card container */
+	.card {
+		@apply bg-white rounded-xl shadow-lg p-6;
+		@apply border border-gray-200;
+	}
+
+	/* Form inputs */
+	.input {
+		@apply min-h-[44px] px-4 py-2 rounded-lg border border-gray-300;
+		@apply focus:outline-none focus:ring-2 focus:ring-neuratos-blue-500 focus:border-transparent;
+		@apply transition-all duration-200;
+	}
+
+	.select {
+		@apply min-h-[44px] px-4 py-2 rounded-lg border border-gray-300;
+		@apply bg-white cursor-pointer;
+		@apply focus:outline-none focus:ring-2 focus:ring-neuratos-blue-500 focus:border-transparent;
+	}
+
+	/* Results display */
+	.result-card {
+		@apply card;
+		@apply bg-gradient-to-br from-neuratos-blue-50 to-white;
+	}
+
+	.score-display {
+		@apply text-4xl font-bold text-neuratos-blue-700;
+	}
+
+	/* Accessibility - High contrast */
+	.high-contrast {
+		@apply border-2 border-gray-900;
+	}
+
+	/* Reduced motion */
+	@media (prefers-reduced-motion: reduce) {
+		* {
+			animation-duration: 0.01ms !important;
+			animation-iteration-count: 1 !important;
+			transition-duration: 0.01ms !important;
+		}
+	}
+}
+
+@layer utilities {
+	/* Mobile-first touch targets */
+	.touch-target {
+		@apply min-h-[44px] min-w-[44px];
+	}
+
+	.touch-target-lg {
+		@apply min-h-[56px] min-w-[56px];
+	}
+
+	/* Screen reader only */
+	.sr-only {
+		@apply absolute w-px h-px p-0 -m-px overflow-hidden;
+		clip: rect(0, 0, 0, 0);
+		white-space: nowrap;
+		border-width: 0;
+	}
+}

@@ -1,0 +1,95 @@
+{
+  "name": "@neuratos/ms-calculators",
+  "version": "1.0.0",
+  "description": "Hungarian MS assessment calculator library with BICAMS normalization",
+  "type": "module",
+  "scripts": {
+    "dev": "vite dev",
+    "build": "vite build && npm run package",
+    "preview": "vite preview",
+    "package": "svelte-kit sync && svelte-package && publint",
+    "prepublishOnly": "npm run package",
+    "test": "vitest",
+    "test:e2e": "playwright test",
+    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+    "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+    "format": "prettier --write .",
+    "lint": "prettier --check . && eslint ."
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "svelte": "./dist/index.js"
+    },
+    "./edss": {
+      "types": "./dist/edss/index.d.ts",
+      "svelte": "./dist/edss/index.js"
+    },
+    "./sdmt": {
+      "types": "./dist/sdmt/index.d.ts",
+      "svelte": "./dist/sdmt/index.js"
+    },
+    "./pasat": {
+      "types": "./dist/pasat/index.d.ts",
+      "svelte": "./dist/pasat/index.js"
+    },
+    "./msfc": {
+      "types": "./dist/msfc/index.d.ts",
+      "svelte": "./dist/msfc/index.js"
+    },
+    "./bicams": {
+      "types": "./dist/services/bicams-zscore.service.d.ts",
+      "default": "./dist/services/bicams-zscore.service.js"
+    }
+  },
+  "files": [
+    "dist",
+    "!dist/**/*.test.*",
+    "!dist/**/*.spec.*"
+  ],
+  "peerDependencies": {
+    "svelte": "^5.0.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.40.0",
+    "@sveltejs/adapter-auto": "^3.0.0",
+    "@sveltejs/kit": "^2.43.2",
+    "@sveltejs/package": "^2.0.0",
+    "@sveltejs/vite-plugin-svelte": "^5.0.0",
+    "@types/node": "^20.0.0",
+    "autoprefixer": "^10.4.16",
+    "eslint": "^9.0.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-svelte": "^2.36.0",
+    "postcss": "^8.4.33",
+    "prettier": "^3.1.1",
+    "prettier-plugin-svelte": "^3.1.2",
+    "publint": "^0.1.9",
+    "svelte": "^5.39.5",
+    "svelte-check": "^4.0.0",
+    "tailwindcss": "^3.4.18",
+    "tslib": "^2.4.1",
+    "typescript": "^5.9.2",
+    "vite": "^6.0.0",
+    "vitest": "^2.0.0"
+  },
+  "keywords": [
+    "multiple-sclerosis",
+    "edss",
+    "sdmt",
+    "pasat",
+    "msfc",
+    "bicams",
+    "cognitive-assessment",
+    "neuratos",
+    "hungarian",
+    "svelte",
+    "typescript"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Zsolaj123/MS-calculators"
+  },
+  "license": "MIT",
+  "author": "Neuratos Team"
+}

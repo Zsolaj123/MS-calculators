@@ -1,0 +1,67 @@
+[
+	{
+		"scaledScore": 2,
+		"lower": 0,
+		"upper": 16
+	},
+	{
+		"scaledScore": 3,
+		"lower": 17,
+		"upper": 18
+	},
+	{
+		"scaledScore": 4,
+		"lower": 19,
+		"upper": 19
+	},
+	{
+		"scaledScore": 5,
+		"lower": 20,
+		"upper": 21
+	},
+	{
+		"scaledScore": 6,
+		"lower": 22,
+		"upper": 23
+	},
+	{
+		"scaledScore": 7,
+		"lower": 24,
+		"upper": 24
+	},
+	{
+		"scaledScore": 8,
+		"lower": 25,
+		"upper": 26
+	},
+	{
+		"scaledScore": 9,
+		"lower": 27,
+		"upper": 28
+	},
+	{
+		"scaledScore": 10,
+		"lower": 29,
+		"upper": 29
+	},
+	{
+		"scaledScore": 11,
+		"lower": 30,
+		"upper": 31
+	},
+	{
+		"scaledScore": 12,
+		"lower": 32,
+		"upper": 33
+	},
+	{
+		"scaledScore": 13,
+		"lower": 34,
+		"upper": 35
+	},
+	{
+		"scaledScore": 14,
+		"lower": 36,
+		"upper": 36
+	}
+]
