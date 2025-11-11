@@ -15,6 +15,15 @@ import type { BICAMSDemographics, BICAMSResult, SDMTResponse } from '../types/in
 // Symbol size type for adjustable display
 export type SymbolSize = 'small' | 'medium' | 'large';
 
+// Test mode type
+export type SDMTTestMode = 'classic' | 'mobile' | 'random';
+
+// Theme type
+export type SDMTTheme = 'light' | 'dark';
+
+// Color scheme type
+export type SDMTColorScheme = 'blue' | 'green' | 'purple' | 'teal';
+
 // Re-export symbol set type
 export type { SDMTSymbolSet };
 export { SYMBOL_SET_NAMES };
@@ -48,6 +57,9 @@ interface SDMTState {
 	demographics: BICAMSDemographics | null;
 	symbolSize: SymbolSize;
 	symbolSet: SDMTSymbolSet;
+	testMode: SDMTTestMode;
+	theme: SDMTTheme;
+	colorScheme: SDMTColorScheme;
 	lastAnswerCorrect: boolean | null;
 	lastAnswerTimestamp: number | null;
 	bicamsResult: BICAMSResult | null;

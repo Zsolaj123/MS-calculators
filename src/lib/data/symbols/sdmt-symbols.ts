@@ -56,14 +56,62 @@ export const SDMT_SYMBOLS_LINES = [
 ];
 
 // ============================================================================
+// SYMBOL SET 4: "Arrows" (Directional symbols)
+// ============================================================================
+export const SDMT_SYMBOLS_ARROWS = [
+	'<svg viewBox="0 0 100 100" class="symbol-svg"><polyline points="20,50 50,20 50,80 20,50" stroke="currentColor" stroke-width="10" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>', // Left arrow
+	'<svg viewBox="0 0 100 100" class="symbol-svg"><polyline points="80,50 50,20 50,80 80,50" stroke="currentColor" stroke-width="10" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>', // Right arrow
+	'<svg viewBox="0 0 100 100" class="symbol-svg"><polyline points="50,20 20,50 80,50 50,20" stroke="currentColor" stroke-width="10" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>', // Up arrow
+	'<svg viewBox="0 0 100 100" class="symbol-svg"><polyline points="50,80 20,50 80,50 50,80" stroke="currentColor" stroke-width="10" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>', // Down arrow
+	'<svg viewBox="0 0 100 100" class="symbol-svg"><polyline points="30,30 50,50 30,70" stroke="currentColor" stroke-width="10" fill="none" stroke-linecap="round"/><polyline points="50,30 70,50 50,70" stroke="currentColor" stroke-width="10" fill="none" stroke-linecap="round"/></svg>', // Double right chevron
+	'<svg viewBox="0 0 100 100" class="symbol-svg"><polyline points="70,30 50,50 70,70" stroke="currentColor" stroke-width="10" fill="none" stroke-linecap="round"/><polyline points="50,30 30,50 50,70" stroke="currentColor" stroke-width="10" fill="none" stroke-linecap="round"/></svg>', // Double left chevron
+	'<svg viewBox="0 0 100 100" class="symbol-svg"><polyline points="30,40 50,20 70,40" stroke="currentColor" stroke-width="10" fill="none" stroke-linecap="round"/><polyline points="30,70 50,50 70,70" stroke="currentColor" stroke-width="10" fill="none" stroke-linecap="round"/></svg>', // Double up chevron
+	'<svg viewBox="0 0 100 100" class="symbol-svg"><polyline points="30,30 50,50 70,30" stroke="currentColor" stroke-width="10" fill="none" stroke-linecap="round"/><polyline points="30,60 50,80 70,60" stroke="currentColor" stroke-width="10" fill="none" stroke-linecap="round"/></svg>', // Double down chevron
+	'<svg viewBox="0 0 100 100" class="symbol-svg"><circle cx="50" cy="50" r="8" fill="currentColor"/><polyline points="30,30 50,50 70,30 50,50 70,70 50,50 30,70" stroke="currentColor" stroke-width="10" fill="none" stroke-linecap="round"/></svg>' // Compass
+];
+
+// ============================================================================
+// SYMBOL SET 5: "Unicode" (Mathematical Unicode symbols)
+// ============================================================================
+export const SDMT_SYMBOLS_UNICODE = [
+	'<svg viewBox="0 0 100 100" class="symbol-svg"><text x="50" y="70" font-size="60" text-anchor="middle" fill="currentColor" font-family="Arial, sans-serif">⊕</text></svg>', // Circled plus
+	'<svg viewBox="0 0 100 100" class="symbol-svg"><text x="50" y="70" font-size="60" text-anchor="middle" fill="currentColor" font-family="Arial, sans-serif">⊗</text></svg>', // Circled times
+	'<svg viewBox="0 0 100 100" class="symbol-svg"><text x="50" y="70" font-size="60" text-anchor="middle" fill="currentColor" font-family="Arial, sans-serif">⊤</text></svg>', // Down tack
+	'<svg viewBox="0 0 100 100" class="symbol-svg"><text x="50" y="70" font-size="60" text-anchor="middle" fill="currentColor" font-family="Arial, sans-serif">⊥</text></svg>', // Up tack
+	'<svg viewBox="0 0 100 100" class="symbol-svg"><text x="50" y="70" font-size="60" text-anchor="middle" fill="currentColor" font-family="Arial, sans-serif">∴</text></svg>', // Therefore
+	'<svg viewBox="0 0 100 100" class="symbol-svg"><text x="50" y="70" font-size="60" text-anchor="middle" fill="currentColor" font-family="Arial, sans-serif">∵</text></svg>', // Because
+	'<svg viewBox="0 0 100 100" class="symbol-svg"><text x="50" y="70" font-size="60" text-anchor="middle" fill="currentColor" font-family="Arial, sans-serif">⊂</text></svg>', // Subset
+	'<svg viewBox="0 0 100 100" class="symbol-svg"><text x="50" y="70" font-size="60" text-anchor="middle" fill="currentColor" font-family="Arial, sans-serif">⊃</text></svg>', // Superset
+	'<svg viewBox="0 0 100 100" class="symbol-svg"><text x="50" y="70" font-size="60" text-anchor="middle" fill="currentColor" font-family="Arial, sans-serif">∠</text></svg>' // Angle
+];
+
+// ============================================================================
+// SYMBOL SET 6: "Unicode Extended" (Extended mathematical symbols)
+// ============================================================================
+export const SDMT_SYMBOLS_UNICODE_EXTENDED = [
+	'<svg viewBox="0 0 100 100" class="symbol-svg"><text x="50" y="70" font-size="60" text-anchor="middle" fill="currentColor" font-family="Arial, sans-serif">→</text></svg>', // Rightwards arrow
+	'<svg viewBox="0 0 100 100" class="symbol-svg"><text x="50" y="70" font-size="60" text-anchor="middle" fill="currentColor" font-family="Arial, sans-serif">←</text></svg>', // Leftwards arrow
+	'<svg viewBox="0 0 100 100" class="symbol-svg"><text x="50" y="70" font-size="60" text-anchor="middle" fill="currentColor" font-family="Arial, sans-serif">↑</text></svg>', // Upwards arrow
+	'<svg viewBox="0 0 100 100" class="symbol-svg"><text x="50" y="70" font-size="60" text-anchor="middle" fill="currentColor" font-family="Arial, sans-serif">↓</text></svg>', // Downwards arrow
+	'<svg viewBox="0 0 100 100" class="symbol-svg"><text x="50" y="70" font-size="60" text-anchor="middle" fill="currentColor" font-family="Arial, sans-serif">↔</text></svg>', // Left right arrow
+	'<svg viewBox="0 0 100 100" class="symbol-svg"><text x="50" y="70" font-size="60" text-anchor="middle" fill="currentColor" font-family="Arial, sans-serif">⇄</text></svg>', // Rightwards arrow over leftwards arrow
+	'<svg viewBox="0 0 100 100" class="symbol-svg"><text x="50" y="70" font-size="60" text-anchor="middle" fill="currentColor" font-family="Arial, sans-serif">≠</text></svg>', // Not equal to
+	'<svg viewBox="0 0 100 100" class="symbol-svg"><text x="50" y="70" font-size="60" text-anchor="middle" fill="currentColor" font-family="Arial, sans-serif">≈</text></svg>', // Almost equal to
+	'<svg viewBox="0 0 100 100" class="symbol-svg"><text x="50" y="70" font-size="60" text-anchor="middle" fill="currentColor" font-family="Arial, sans-serif">≡</text></svg>' // Identical to
+];
+
+// ============================================================================
 // Symbol Set Type
 // ============================================================================
-export type SDMTSymbolSet = 'classic' | 'geometric' | 'lines' | 'random';
+export type SDMTSymbolSet = 'classic' | 'geometric' | 'lines' | 'arrows' | 'unicode' | 'unicode-extended' | 'random';
 
 export const SYMBOL_SET_NAMES: Record<SDMTSymbolSet, string> = {
 	classic: 'Klasszikus',
 	geometric: 'Geometriai alakzatok',
 	lines: 'Vonalak és szögek',
+	arrows: 'Nyilak és irányok',
+	unicode: 'Unicode szimbólumok',
+	'unicode-extended': 'Unicode kiterjesztett',
 	random: 'Véletlenszerű'
 };
 
@@ -71,6 +119,9 @@ export const SYMBOL_SET_DESCRIPTIONS: Record<SDMTSymbolSet, string> = {
 	classic: 'Eredeti szimbólumok javított alakzatokkal',
 	geometric: 'Egyszerű geometriai formák (körök, négyzetek, háromszögek)',
 	lines: 'Vonalalapú szimbólumok nagy kontraszttal (jobb alacsony látásnál)',
+	arrows: 'Irányított nyilak és chevronok (különböző orientációk)',
+	unicode: 'Matematikai Unicode szimbólumok',
+	'unicode-extended': 'Kiterjesztett nyilak, relációk és logikai szimbólumok',
 	random: 'Véletlenszerűen keveri az összes szimbólumkészletet'
 };
 
@@ -90,13 +141,25 @@ export function getSymbolSet(setType: SDMTSymbolSet): string[] {
 			return SDMT_SYMBOLS_GEOMETRIC;
 		case 'lines':
 			return SDMT_SYMBOLS_LINES;
+		case 'arrows':
+			return SDMT_SYMBOLS_ARROWS;
+		case 'unicode':
+			return SDMT_SYMBOLS_UNICODE;
+		case 'unicode-extended':
+			return SDMT_SYMBOLS_UNICODE_EXTENDED;
 		case 'random':
-			// Create a random mix by picking one symbol from each set per position
-			const allSets = [SDMT_SYMBOLS_CLASSIC, SDMT_SYMBOLS_GEOMETRIC, SDMT_SYMBOLS_LINES];
-			return Array.from({ length: 9 }, (_, i) => {
-				const randomSet = allSets[Math.floor(Math.random() * allSets.length)];
-				return randomSet[i];
-			});
+			// Create a random mix by picking random symbols from the entire pool (54 symbols)
+			const allSets = [
+				SDMT_SYMBOLS_CLASSIC,
+				SDMT_SYMBOLS_GEOMETRIC,
+				SDMT_SYMBOLS_LINES,
+				SDMT_SYMBOLS_ARROWS,
+				SDMT_SYMBOLS_UNICODE,
+				SDMT_SYMBOLS_UNICODE_EXTENDED
+			];
+			const allSymbols = allSets.flat(); // 54 total symbols
+			const shuffled = [...allSymbols].sort(() => Math.random() - 0.5);
+			return shuffled.slice(0, 9); // Pick first 9 after shuffle
 		default:
 			return SDMT_SYMBOLS_CLASSIC;
 	}
@@ -123,4 +186,31 @@ export function generateSymbolDigitKey(symbolSet: SDMTSymbolSet = 'classic'): Ar
 // ============================================================================
 export function generateTestItems(count: number, symbolSet: SDMTSymbolSet = 'classic'): number[] {
 	return Array.from({ length: count }, () => Math.floor(Math.random() * 9));
+}
+
+// ============================================================================
+// Mobile Mode - Get 6 symbols for better screen sizing
+// ============================================================================
+export function getSymbolSetMobile(setType: SDMTSymbolSet): string[] {
+	const fullSet = getSymbolSet(setType);
+	return fullSet.slice(0, 6); // Return first 6 symbols
+}
+
+export function generateSymbolDigitKeyMobile(
+	symbolSet: SDMTSymbolSet = 'classic'
+): Array<{
+	symbolIndex: number;
+	digit: number;
+	svgHtml: string;
+}> {
+	const symbols = getSymbolSetMobile(symbolSet);
+	return symbols.map((svg, index) => ({
+		symbolIndex: index,
+		digit: index + 1, // Digits 1-6
+		svgHtml: svg
+	}));
+}
+
+export function generateTestItemsMobile(count: number): number[] {
+	return Array.from({ length: count }, () => Math.floor(Math.random() * 6)); // Only 0-5
 }
