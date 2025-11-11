@@ -36,7 +36,7 @@
 			name: 'SDMT - Symbol Digit Modalities Test',
 			shortName: 'SDMT',
 			icon: '🧠',
-			description: 'Feldolgozási sebesség és vizuális munkamemória értékelése szimbólum-szám párosítással.',
+			description: 'Feldolgozási sebesség és vizuális munkamemória értékelése szimbólum-szám párosítással. Reszponzív design minden eszközre.',
 			category: 'cognitive',
 			status: 'available',
 			route: '/sdmt',
@@ -45,24 +45,8 @@
 				'Gyakorló mód',
 				'BICAMS z-score normalizálás',
 				'Többféle szimbólumkészlet',
-				'Testreszabható beállítások'
-			]
-		},
-		{
-			id: 'sdmt-mobile',
-			name: 'SDMT - Mobil Verzió',
-			shortName: 'SDMT Mobil',
-			icon: '📱',
-			description: 'Mobilra optimalizált SDMT teszt nagy szimbólumokkal és érintésvezérlésű billentyűzettel.',
-			category: 'cognitive',
-			status: 'available',
-			route: '/sdmt-mobile',
-			features: [
-				'Teljes képernyős élmény',
-				'Nagy érintési célpontok',
-				'Optimalizált elrendezés',
-				'Tableten is használható',
-				'Ugyanaz az értékelés'
+				'Testreszabható beállítások',
+				'Mobil és tablet optimalizált'
 			]
 		},
 		{
