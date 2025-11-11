@@ -193,27 +193,32 @@ export const calculatorCards: CalculatorCard[] = [
 			en: 'Measurement of auditory working memory and information processing speed through paced arithmetic.'
 		},
 		category: 'cognitive',
-		status: 'comingSoon',
+		status: 'available',
+		route: '/pasat',
 		features: [
 			{
 				hu: 'PASAT-3 és PASAT-2 változatok',
 				en: 'PASAT-3 and PASAT-2 versions'
 			},
 			{
-				hu: 'Hallási stimulus',
-				en: 'Auditory stimulus'
+				hu: 'Hallási stimulus Web Speech API-val',
+				en: 'Auditory stimulus with Web Speech API'
 			},
 			{
-				hu: 'BICAMS normák',
-				en: 'BICAMS norms'
+				hu: 'BICAMS normák és z-score számítás',
+				en: 'BICAMS norms and z-score calculation'
 			},
 			{
-				hu: 'Automatikus pontozás',
-				en: 'Automatic scoring'
+				hu: 'Automatikus pontozás és visszajelzés',
+				en: 'Automatic scoring and feedback'
 			},
 			{
-				hu: 'Progresszív nehézség',
-				en: 'Progressive difficulty'
+				hu: 'Gyakorló és fő teszt mód',
+				en: 'Practice and main test modes'
+			},
+			{
+				hu: 'Életkor és végzettség korrekció',
+				en: 'Age and education adjustment'
 			}
 		]
 	},
