@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { sdmtStore } from '$lib/stores/sdmt.svelte';
+	import { sdmtStore, type SymbolSelectionMode } from '$lib/stores/sdmt.svelte';
 	import SDMTTestMobile from '$lib/components/sdmt/SDMTTestMobile.svelte';
 	import SDMTResults from '$lib/components/sdmt/SDMTResults.svelte';
 	import LanguageSwitcher from '$lib/components/common/LanguageSwitcher.svelte';
@@ -11,6 +11,9 @@
 	let showInstructions = $state(true);
 	let colorScheme = $derived(sdmtStore.colorScheme);
 	let symbolSet = $derived(sdmtStore.symbolSet);
+	let symbolSelectionMode = $derived(sdmtStore.symbolSelectionMode);
+	let inputMode = $derived(sdmtStore.inputMode);
+	let voiceLanguage = $derived(sdmtStore.voiceLanguage);
 
 	// Demographics
 	let age = $state('');
@@ -22,12 +25,22 @@
 		// Mobile version uses the current symbol set (6 or 9 symbols based on user preference)
 	});
 
+	// Convert education years to BICAMS format (6, 12, 13, 15, 17, 21)
+	function mapEducationToBICAMS(years: number): 6 | 12 | 13 | 15 | 17 | 21 {
+		if (years <= 8) return 6;
+		if (years <= 12) return 12;
+		if (years <= 13) return 13;
+		if (years <= 15) return 15;
+		if (years <= 17) return 17;
+		return 21;
+	}
+
 	function startPractice() {
 		if (age && education && gender) {
 			sdmtStore.setDemographics({
 				age: parseInt(age),
-				yearsOfEducation: parseInt(education),
-				gender: gender as 'male' | 'female'
+				sex: gender === 'male' ? 1 : 2,
+				education: mapEducationToBICAMS(parseInt(education))
 			});
 		}
 		showInstructions = false;
@@ -38,8 +51,8 @@
 		if (age && education && gender) {
 			sdmtStore.setDemographics({
 				age: parseInt(age),
-				yearsOfEducation: parseInt(education),
-				gender: gender as 'male' | 'female'
+				sex: gender === 'male' ? 1 : 2,
+				education: mapEducationToBICAMS(parseInt(education))
 			});
 		}
 		showInstructions = false;
@@ -81,6 +94,36 @@
 	function randomizeSymbols() {
 		sdmtStore.generateKey(); // This already randomizes the mapping
 	}
+
+	function changeSymbolSelectionMode(mode: SymbolSelectionMode) {
+		sdmtStore.setSymbolSelectionMode(mode);
+	}
+
+	function changeInputMode(mode: 'keyboard' | 'voice') {
+		sdmtStore.setInputMode(mode);
+	}
+
+	function changeVoiceLanguage(lang: 'hu-HU' | 'en-US') {
+		sdmtStore.setVoiceLanguage(lang);
+	}
+
+	// Symbol selection mode options
+	const symbolSelectionModeOptions = [
+		{ value: 'original' as const, label: { hu: 'Eredeti (9 szimbólum)', en: 'Original (9 symbols)' }, description: { hu: 'A klasszikus SDMT szimbólumok', en: 'Classic SDMT symbols' } },
+		{ value: 'random-from-pool' as const, label: { hu: 'Véletlenszerű (54-ből)', en: 'Random (from 54)' }, description: { hu: '9 véletlenszerű szimbólum', en: '9 random symbols' } }
+	];
+
+	// Input mode options
+	const inputModeOptions = [
+		{ value: 'keyboard' as const, label: { hu: '⌨️ Billentyűzet', en: '⌨️ Keyboard' } },
+		{ value: 'voice' as const, label: { hu: '🎤 Hangvezérlés', en: '🎤 Voice' } }
+	];
+
+	// Voice language options
+	const voiceLanguageOptions = [
+		{ value: 'hu-HU' as const, label: '🇭🇺 Magyar', flag: '🇭🇺' },
+		{ value: 'en-US' as const, label: '🇬🇧 English', flag: '🇬🇧' }
+	];
 </script>
 
 <svelte:head>
@@ -180,6 +223,58 @@
 			<div class="settings-section">
 				<h2 class="info-title">{t(sdmt.settingsTitle)}</h2>
 
+				<!-- Symbol Selection Mode -->
+				<div class="setting-group">
+					<label class="setting-label" id="symbol-mode-label">Szimbólum mód / Symbol Mode</label>
+					<div class="symbol-mode-options" role="group" aria-labelledby="symbol-mode-label">
+						{#each symbolSelectionModeOptions as option (option.value)}
+							<button
+								onclick={() => changeSymbolSelectionMode(option.value)}
+								class="symbol-mode-option {option.value === symbolSelectionMode ? 'active' : ''}"
+								type="button"
+								aria-pressed={option.value === symbolSelectionMode}
+							>
+								<span class="mode-label">{option.label.hu}</span>
+								<span class="mode-desc">{option.description.hu}</span>
+							</button>
+						{/each}
+					</div>
+				</div>
+
+				<!-- Input Mode -->
+				<div class="setting-group">
+					<label class="setting-label" id="input-mode-label">Beviteli mód / Input Mode</label>
+					<div class="input-mode-options" role="group" aria-labelledby="input-mode-label">
+						{#each inputModeOptions as option (option.value)}
+							<button
+								onclick={() => changeInputMode(option.value)}
+								class="input-mode-option {option.value === inputMode ? 'active' : ''}"
+								type="button"
+								aria-pressed={option.value === inputMode}
+							>
+								{option.label.hu}
+							</button>
+						{/each}
+					</div>
+					{#if inputMode === 'voice'}
+						<div class="voice-lang-options mt-3">
+							<label class="setting-label text-xs">Beszéd nyelve:</label>
+							<div class="flex gap-2">
+								{#each voiceLanguageOptions as option (option.value)}
+									<button
+										onclick={() => changeVoiceLanguage(option.value)}
+										class="voice-lang-option {option.value === voiceLanguage ? 'active' : ''}"
+										type="button"
+										aria-pressed={option.value === voiceLanguage}
+									>
+										{option.label}
+									</button>
+								{/each}
+							</div>
+						</div>
+					{/if}
+				</div>
+
 				<div class="setting-group">
 					<label class="setting-label" id="color-scheme-label">{t(sdmt.colorSchemeLabel)}</label>
 					<div class="color-options" role="group" aria-labelledby="color-scheme-label">
@@ -192,22 +287,6 @@
 							>
 								<div class="color-circle {option.color}"></div>
 								<span>{t(option.label)}</span>
-							</button>
-						{/each}
-					</div>
-				</div>
-
-				<div class="setting-group">
-					<label class="setting-label" id="symbol-set-label">{t(sdmt.symbolSetLabel)}</label>
-					<div class="symbol-set-options" role="group" aria-labelledby="symbol-set-label">
-						{#each symbolSetOptions as option (option.value)}
-							<button
-								onclick={() => changeSymbolSet(option.value)}
-								class="symbol-set-option {option.value === symbolSet ? 'active' : ''}"
-								type="button"
-								aria-pressed={option.value === symbolSet}
-							>
-								{t(option.label)}
 							</button>
 						{/each}
 					</div>
@@ -420,6 +499,64 @@
 	}
 
 	.symbol-set-option.active {
+		@apply border-blue-500 bg-blue-50 dark:bg-blue-900;
+	}
+
+	/* Symbol Selection Mode Options */
+	.symbol-mode-options {
+		@apply grid grid-cols-1 gap-2;
+	}
+
+	.symbol-mode-option {
+		@apply flex flex-col p-3 rounded-lg;
+		@apply bg-white dark:bg-gray-800;
+		@apply border-2 border-gray-200 dark:border-gray-700;
+		@apply text-left transition-all duration-150;
+	}
+
+	.symbol-mode-option.active {
+		@apply border-blue-500 bg-blue-50 dark:bg-blue-900;
+	}
+
+	.symbol-mode-option .mode-label {
+		@apply font-semibold text-sm text-gray-800 dark:text-gray-200;
+	}
+
+	.symbol-mode-option .mode-desc {
+		@apply text-xs text-gray-500 dark:text-gray-400 mt-0.5;
+	}
+
+	/* Input Mode Options */
+	.input-mode-options {
+		@apply grid grid-cols-2 gap-2;
+	}
+
+	.input-mode-option {
+		@apply p-3 rounded-lg;
+		@apply bg-white dark:bg-gray-800;
+		@apply border-2 border-gray-200 dark:border-gray-700;
+		@apply text-sm font-medium;
+		@apply transition-all duration-150;
+	}
+
+	.input-mode-option.active {
+		@apply border-blue-500 bg-blue-50 dark:bg-blue-900;
+	}
+
+	/* Voice Language Options */
+	.voice-lang-options {
+		@apply p-2 bg-gray-100 dark:bg-gray-900 rounded-lg;
+	}
+
+	.voice-lang-option {
+		@apply px-4 py-2 rounded-lg;
+		@apply bg-white dark:bg-gray-800;
+		@apply border-2 border-gray-200 dark:border-gray-700;
+		@apply text-sm font-medium;
+		@apply transition-all duration-150;
+	}
+
+	.voice-lang-option.active {
 		@apply border-blue-500 bg-blue-50 dark:bg-blue-900;
 	}
 

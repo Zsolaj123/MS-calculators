@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { sdmtStore } from '$lib/stores/sdmt.svelte';
 	import { onMount, onDestroy } from 'svelte';
+	import { VoiceInput } from '$lib/components/ui';
 
 	let currentSymbol = $derived(sdmtStore.getCurrentSymbol());
 	let symbolCount = $derived(sdmtStore.getSymbolCount());
@@ -8,11 +9,12 @@
 	let timeLeft = $derived(sdmtStore.timeLeft);
 	let isPractice = $derived(sdmtStore.currentMode === 'practice');
 	let isPaused = $derived(sdmtStore.isPaused);
-	let lastAnswerCorrect = $derived(sdmtStore.lastAnswerCorrect);
 	let currentScore = $derived(isPractice ? sdmtStore.state.practiceScore : sdmtStore.score);
 	let currentIndex = $derived(sdmtStore.currentItemIndex);
 	let theme = $derived(sdmtStore.theme);
 	let colorScheme = $derived(sdmtStore.colorScheme);
+	let inputMode = $derived(sdmtStore.inputMode);
+	let voiceLanguage = $derived(sdmtStore.voiceLanguage);
 	// Generate button array based on symbol count
 	let buttons = $derived(Array.from({ length: symbolCount }, (_, i) => i + 1));
 
@@ -160,20 +162,31 @@
 		{/if}
 	</div>
 
-	<!-- Bottom Section: Number Keypad -->
+	<!-- Bottom Section: Number Keypad or Voice Input -->
 	<div class="keypad-section">
-		<div class="keypad-grid">
-			{#each buttons as digit (digit)}
-				<button
-					type="button"
-					class="keypad-button {buttonColorClass}"
-					onclick={() => handleAnswer(digit)}
+		{#if inputMode === 'voice'}
+			<div class="voice-input-wrapper">
+				<VoiceInput
+					onResult={handleAnswer}
+					language={voiceLanguage}
 					disabled={isPaused}
-				>
-					{digit}
-				</button>
-			{/each}
-		</div>
+					maxDigit={symbolCount}
+				/>
+			</div>
+		{:else}
+			<div class="keypad-grid">
+				{#each buttons as digit (digit)}
+					<button
+						type="button"
+						class="keypad-button {buttonColorClass}"
+						onclick={() => handleAnswer(digit)}
+						disabled={isPaused}
+					>
+						{digit}
+					</button>
+				{/each}
+			</div>
+		{/if}
 	</div>
 </div>
 
@@ -218,8 +231,9 @@
 		@apply border border-gray-200 dark:border-gray-600;
 	}
 
+	/* Increased by 35%+: 40px → 56px */
 	.key-symbol {
-		@apply w-10 h-10 mb-1;
+		@apply w-14 h-14 mb-1;
 	}
 
 	.key-symbol :global(svg) {
@@ -249,11 +263,12 @@
 		@apply text-teal-600 dark:text-teal-400;
 	}
 
+	/* Increased by 35%+: text-xl → text-2xl */
 	.key-digit {
-		@apply text-xl font-bold;
+		@apply text-2xl font-bold;
 		@apply text-gray-900 dark:text-gray-100;
 		@apply bg-white dark:bg-gray-700;
-		@apply rounded px-2.5 py-1;
+		@apply rounded px-3 py-1.5;
 		@apply shadow-sm;
 	}
 
@@ -366,6 +381,12 @@
 		@apply bg-white dark:bg-gray-800;
 		@apply border-t-2 border-gray-200 dark:border-gray-700;
 		max-height: 33vh;
+	}
+
+	.voice-input-wrapper {
+		@apply flex items-center justify-center;
+		@apply h-full py-4;
+		min-height: calc(33vh - 3rem);
 	}
 
 	.keypad-grid {

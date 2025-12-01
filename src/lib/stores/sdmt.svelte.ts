@@ -457,8 +457,8 @@ function createSDMTStore() {
 
 		endPractice() {
 			state.isPracticeRunning = false;
-			// After practice, go directly to test
-			this.startTest();
+			// After practice, show results (do NOT auto-start test)
+			state.currentMode = 'results';
 		},
 
 		endTest() {
@@ -619,6 +619,11 @@ function createSDMTStore() {
 		// Get number of symbols based on mode
 		getSymbolCount(): number {
 			return state.testMode === 'mobile' ? 6 : 9;
+		},
+
+		// Reset to initial state (back to demographics screen)
+		reset() {
+			this.initialize();
 		}
 	};
 }
