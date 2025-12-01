@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { sdmtStore } from '$lib/stores/sdmt.svelte';
 	import { onMount, onDestroy } from 'svelte';
+	import { VoiceInput } from '$lib/components/ui';
 
 	let currentSymbol = $derived(sdmtStore.getCurrentSymbol());
 	let symbolCount = $derived(sdmtStore.getSymbolCount());
@@ -13,6 +14,8 @@
 	let symbolSize = $derived(sdmtStore.symbolSize);
 	let theme = $derived(sdmtStore.theme);
 	let colorScheme = $derived(sdmtStore.colorScheme);
+	let inputMode = $derived(sdmtStore.inputMode);
+	let voiceLanguage = $derived(sdmtStore.voiceLanguage);
 
 	// Generate button array based on symbol count
 	let buttons = $derived(Array.from({ length: symbolCount }, (_, i) => i + 1));
@@ -187,19 +190,35 @@
 			</div>
 		{/if}
 
-		<!-- Number Pad -->
-		<div class="number-pad mt-8 grid-cols-3">
-			{#each buttons as digit (digit)}
-				<button
-					type="button"
-					class="number-button {buttonColorClass}"
-					onclick={() => handleAnswer(digit)}
+		<!-- Input Area: Number Pad or Voice Input -->
+		{#if inputMode === 'voice'}
+			<div class="voice-input-area mt-8">
+				<VoiceInput
+					onResult={handleAnswer}
+					language={voiceLanguage}
 					disabled={isPaused}
-				>
-					{digit}
-				</button>
-			{/each}
-		</div>
+					maxDigit={symbolCount}
+				/>
+				<p class="voice-hint">
+					{voiceLanguage === 'hu-HU'
+						? '💡 Mondj egy számot 1-től ' + symbolCount + '-ig'
+						: '💡 Say a number from 1 to ' + symbolCount}
+				</p>
+			</div>
+		{:else}
+			<div class="number-pad mt-8 grid-cols-3">
+				{#each buttons as digit (digit)}
+					<button
+						type="button"
+						class="number-button {buttonColorClass}"
+						onclick={() => handleAnswer(digit)}
+						disabled={isPaused}
+					>
+						{digit}
+					</button>
+				{/each}
+			</div>
+		{/if}
 
 		<!-- Controls -->
 		{#if !isPractice}
@@ -222,7 +241,11 @@
 	<!-- Keyboard Shortcuts Help -->
 	<div class="keyboard-help mt-6">
 		<p class="text-xs text-gray-500 dark:text-gray-400 text-center">
-			💡 Billentyűzet: Használd az <kbd>1</kbd>-<kbd>{symbolCount}</kbd> gombokat a válaszadáshoz.
+			{#if inputMode === 'keyboard'}
+				💡 Billentyűzet: Használd az <kbd>1</kbd>-<kbd>{symbolCount}</kbd> gombokat a válaszadáshoz.
+			{:else}
+				🎤 Hangvezérlés aktív - Mondd ki a számot!
+			{/if}
 			{#if !isPractice}
 				<kbd>SPACE</kbd> vagy <kbd>ESC</kbd> a szünethez.
 			{/if}
@@ -266,6 +289,14 @@
 
 	.number-pad {
 		@apply grid gap-3;
+	}
+
+	.voice-input-area {
+		@apply flex flex-col items-center;
+	}
+
+	.voice-hint {
+		@apply mt-4 text-sm text-gray-500 dark:text-gray-400 text-center;
 	}
 
 	.number-button {

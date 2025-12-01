@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { sdmtStore } from '$lib/stores/sdmt.svelte';
+	import { ZScoreDetails } from '$lib/components/ui';
 
 	let score = $derived(sdmtStore.score);
 	let responses = $derived(sdmtStore.responses);
@@ -216,6 +217,16 @@
 					<p class="text-xs text-gray-500 dark:text-gray-400">
 						📚 Referencia: Costers et al. (2017), belga BICAMS validációs tanulmány
 					</p>
+				</div>
+
+				<!-- Expandable Calculation Details -->
+				<div class="calculation-details mt-4">
+					<ZScoreDetails
+						result={bicamsResult}
+						{demographics}
+						rawScore={score}
+						language="hu"
+					/>
 				</div>
 			</div>
 		</div>

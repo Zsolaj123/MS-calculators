@@ -6,8 +6,12 @@
 import {
 	SDMT_SYMBOLS,
 	type SDMTSymbolSet,
+	type SymbolSelectionMode,
 	getSymbolSet,
-	SYMBOL_SET_NAMES
+	getRandomSymbolsFromPool,
+	SYMBOL_SET_NAMES,
+	SYMBOL_SELECTION_MODE_NAMES,
+	SYMBOL_SELECTION_MODE_NAMES_EN
 } from '../data/symbols/sdmt-symbols';
 import { BICAMSZScoreService } from '../services/bicams-zscore.service';
 import type { BICAMSDemographics, BICAMSResult, SDMTResponse } from '../types/index';
@@ -21,12 +25,18 @@ export type SDMTTestMode = 'classic' | 'mobile' | 'random';
 // Theme type
 export type SDMTTheme = 'light' | 'dark';
 
-// Color scheme type
-export type SDMTColorScheme = 'blue' | 'green' | 'purple' | 'teal';
+// Color scheme type - now supports custom color
+export type SDMTColorScheme = 'blue' | 'green' | 'purple' | 'teal' | 'custom';
+
+// Input mode type for voice support
+export type SDMTInputMode = 'keyboard' | 'voice';
+
+// Voice language type
+export type SDMTVoiceLanguage = 'hu-HU' | 'en-US';
 
 // Re-export symbol set type
-export type { SDMTSymbolSet };
-export { SYMBOL_SET_NAMES };
+export type { SDMTSymbolSet, SymbolSelectionMode };
+export { SYMBOL_SET_NAMES, SYMBOL_SELECTION_MODE_NAMES, SYMBOL_SELECTION_MODE_NAMES_EN };
 
 // Symbol-digit mapping
 export interface SymbolDigitMapping {
@@ -57,9 +67,13 @@ interface SDMTState {
 	demographics: BICAMSDemographics | null;
 	symbolSize: SymbolSize;
 	symbolSet: SDMTSymbolSet;
+	symbolSelectionMode: SymbolSelectionMode;
 	testMode: SDMTTestMode;
 	theme: SDMTTheme;
 	colorScheme: SDMTColorScheme;
+	customAccentColor: string;
+	inputMode: SDMTInputMode;
+	voiceLanguage: SDMTVoiceLanguage;
 	lastAnswerCorrect: boolean | null;
 	lastAnswerTimestamp: number | null;
 	bicamsResult: BICAMSResult | null;
@@ -85,9 +99,13 @@ function createSDMTStore() {
 		demographics: null,
 		symbolSize: 'medium',
 		symbolSet: 'classic',
+		symbolSelectionMode: 'original',
 		testMode: 'classic',
 		theme: 'light',
 		colorScheme: 'blue',
+		customAccentColor: '#3b82f6',
+		inputMode: 'keyboard',
+		voiceLanguage: 'hu-HU',
 		lastAnswerCorrect: null,
 		lastAnswerTimestamp: null,
 		bicamsResult: null
@@ -119,8 +137,28 @@ function createSDMTStore() {
 		}
 
 		const savedColorScheme = localStorage.getItem('sdmt-color-scheme') as SDMTColorScheme;
-		if (savedColorScheme && ['blue', 'green', 'purple', 'teal'].includes(savedColorScheme)) {
+		if (savedColorScheme && ['blue', 'green', 'purple', 'teal', 'custom'].includes(savedColorScheme)) {
 			state.colorScheme = savedColorScheme;
+		}
+
+		const savedCustomColor = localStorage.getItem('sdmt-custom-color');
+		if (savedCustomColor && /^#[0-9A-Fa-f]{6}$/.test(savedCustomColor)) {
+			state.customAccentColor = savedCustomColor;
+		}
+
+		const savedSymbolSelectionMode = localStorage.getItem('sdmt-symbol-selection-mode') as SymbolSelectionMode;
+		if (savedSymbolSelectionMode && ['original', 'random-from-pool'].includes(savedSymbolSelectionMode)) {
+			state.symbolSelectionMode = savedSymbolSelectionMode;
+		}
+
+		const savedInputMode = localStorage.getItem('sdmt-input-mode') as SDMTInputMode;
+		if (savedInputMode && ['keyboard', 'voice'].includes(savedInputMode)) {
+			state.inputMode = savedInputMode;
+		}
+
+		const savedVoiceLanguage = localStorage.getItem('sdmt-voice-language') as SDMTVoiceLanguage;
+		if (savedVoiceLanguage && ['hu-HU', 'en-US'].includes(savedVoiceLanguage)) {
+			state.voiceLanguage = savedVoiceLanguage;
 		}
 	}
 
@@ -180,12 +218,31 @@ function createSDMTStore() {
 		get colorScheme() {
 			return state.colorScheme;
 		},
+		get customAccentColor() {
+			return state.customAccentColor;
+		},
+		get symbolSelectionMode() {
+			return state.symbolSelectionMode;
+		},
+		get inputMode() {
+			return state.inputMode;
+		},
+		get voiceLanguage() {
+			return state.voiceLanguage;
+		},
 
 		// Actions
 		initialize() {
 			// Preserve preferences across resets
 			const currentSymbolSize = state.symbolSize;
 			const currentSymbolSet = state.symbolSet;
+			const currentSymbolSelectionMode = state.symbolSelectionMode;
+			const currentTestMode = state.testMode;
+			const currentTheme = state.theme;
+			const currentColorScheme = state.colorScheme;
+			const currentCustomAccentColor = state.customAccentColor;
+			const currentInputMode = state.inputMode;
+			const currentVoiceLanguage = state.voiceLanguage;
 
 			// Reset state
 			state = {
@@ -206,6 +263,13 @@ function createSDMTStore() {
 				demographics: null,
 				symbolSize: currentSymbolSize,
 				symbolSet: currentSymbolSet,
+				symbolSelectionMode: currentSymbolSelectionMode,
+				testMode: currentTestMode,
+				theme: currentTheme,
+				colorScheme: currentColorScheme,
+				customAccentColor: currentCustomAccentColor,
+				inputMode: currentInputMode,
+				voiceLanguage: currentVoiceLanguage,
 				lastAnswerCorrect: null,
 				lastAnswerTimestamp: null,
 				bicamsResult: null
@@ -218,9 +282,17 @@ function createSDMTStore() {
 			// Determine symbol count based on test mode
 			const symbolCount = this.getSymbolCount();
 
-			// Get the selected symbol set
-			const fullSet = getSymbolSet(state.symbolSet);
-			const selectedSymbols = fullSet.slice(0, symbolCount); // 6 or 9 symbols
+			// Get symbols based on selection mode
+			let selectedSymbols: string[];
+
+			if (state.symbolSelectionMode === 'random-from-pool') {
+				// Pick random symbols from all 54 available
+				selectedSymbols = getRandomSymbolsFromPool(symbolCount);
+			} else {
+				// Use original classic symbols
+				const fullSet = getSymbolSet('classic');
+				selectedSymbols = fullSet.slice(0, symbolCount);
+			}
 
 			// Create array of digits (1-6 or 1-9)
 			const digits = Array.from({ length: symbolCount }, (_, i) => i + 1);
@@ -493,10 +565,49 @@ function createSDMTStore() {
 		},
 
 		// Set color scheme preference
-		setColorScheme(colorScheme: SDMTColorScheme) {
+		setColorScheme(colorScheme: SDMTColorScheme, customColor?: string) {
 			state.colorScheme = colorScheme;
 			if (typeof window !== 'undefined') {
 				localStorage.setItem('sdmt-color-scheme', colorScheme);
+			}
+			if (colorScheme === 'custom' && customColor) {
+				this.setCustomAccentColor(customColor);
+			}
+		},
+
+		// Set custom accent color
+		setCustomAccentColor(color: string) {
+			state.customAccentColor = color;
+			if (typeof window !== 'undefined') {
+				localStorage.setItem('sdmt-custom-color', color);
+				// Apply to CSS custom property
+				document.documentElement.style.setProperty('--accent-color', color);
+			}
+		},
+
+		// Set symbol selection mode
+		setSymbolSelectionMode(mode: SymbolSelectionMode) {
+			state.symbolSelectionMode = mode;
+			if (typeof window !== 'undefined') {
+				localStorage.setItem('sdmt-symbol-selection-mode', mode);
+			}
+			// Regenerate key with new mode
+			this.generateKey();
+		},
+
+		// Set input mode
+		setInputMode(mode: SDMTInputMode) {
+			state.inputMode = mode;
+			if (typeof window !== 'undefined') {
+				localStorage.setItem('sdmt-input-mode', mode);
+			}
+		},
+
+		// Set voice language
+		setVoiceLanguage(language: SDMTVoiceLanguage) {
+			state.voiceLanguage = language;
+			if (typeof window !== 'undefined') {
+				localStorage.setItem('sdmt-voice-language', language);
 			}
 		},
 

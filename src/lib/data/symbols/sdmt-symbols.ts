@@ -166,6 +166,54 @@ export function getSymbolSet(setType: SDMTSymbolSet): string[] {
 }
 
 // ============================================================================
+// Get all symbols as flat array (54 total)
+// ============================================================================
+export function getAllSymbolsFlat(): string[] {
+	return [
+		...SDMT_SYMBOLS_CLASSIC,
+		...SDMT_SYMBOLS_GEOMETRIC,
+		...SDMT_SYMBOLS_LINES,
+		...SDMT_SYMBOLS_ARROWS,
+		...SDMT_SYMBOLS_UNICODE,
+		...SDMT_SYMBOLS_UNICODE_EXTENDED
+	];
+}
+
+// ============================================================================
+// Symbol Selection Mode type
+// ============================================================================
+export type SymbolSelectionMode = 'original' | 'random-from-pool';
+
+export const SYMBOL_SELECTION_MODE_NAMES: Record<SymbolSelectionMode, string> = {
+	original: 'Eredeti 9 szimbólum',
+	'random-from-pool': 'Véletlenszerű (54-ből)'
+};
+
+export const SYMBOL_SELECTION_MODE_NAMES_EN: Record<SymbolSelectionMode, string> = {
+	original: 'Original 9 symbols',
+	'random-from-pool': 'Random (from 54)'
+};
+
+export const SYMBOL_SELECTION_MODE_DESCRIPTIONS: Record<SymbolSelectionMode, string> = {
+	original: 'A klasszikus SDMT teszt eredeti 9 szimbóluma',
+	'random-from-pool': '9 véletlenszerűen kiválasztott szimbólum az összes 54-ből'
+};
+
+export const SYMBOL_SELECTION_MODE_DESCRIPTIONS_EN: Record<SymbolSelectionMode, string> = {
+	original: 'The original 9 symbols from the classic SDMT test',
+	'random-from-pool': '9 randomly selected symbols from all 54 available'
+};
+
+// ============================================================================
+// Get random 9 symbols from all 54 available
+// ============================================================================
+export function getRandomSymbolsFromPool(count: number = 9): string[] {
+	const allSymbols = getAllSymbolsFlat();
+	const shuffled = [...allSymbols].sort(() => Math.random() - 0.5);
+	return shuffled.slice(0, count);
+}
+
+// ============================================================================
 // Helper function to generate symbol-digit key
 // ============================================================================
 export function generateSymbolDigitKey(symbolSet: SDMTSymbolSet = 'classic'): Array<{

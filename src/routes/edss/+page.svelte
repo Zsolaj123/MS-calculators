@@ -23,25 +23,37 @@
 
 <style>
 	.page-container {
-		@apply min-h-screen;
-		@apply bg-gradient-to-br from-neuratos-blue-50 to-white;
-		@apply dark:from-gray-900 dark:to-gray-800;
-		@apply p-4;
+		min-height: 100vh;
+		background: linear-gradient(135deg, #0d1117 0%, #161b22 50%, #0d1117 100%);
 	}
 
 	.page-header {
-		@apply max-w-6xl mx-auto mb-4;
+		max-width: 72rem;
+		margin: 0 auto;
+		padding: 1rem 1.5rem;
 	}
 
 	.back-button {
-		@apply px-4 py-2 rounded-lg;
-		@apply bg-white dark:bg-gray-800;
-		@apply text-gray-700 dark:text-gray-300;
-		@apply border border-gray-300 dark:border-gray-600;
-		@apply font-medium text-sm;
-		@apply transition-all duration-200;
-		@apply hover:bg-gray-50 dark:hover:bg-gray-700;
-		@apply hover:shadow-md;
-		@apply focus:outline-none focus:ring-2 focus:ring-neuratos-blue-500;
+		padding: 0.625rem 1rem;
+		font-size: 0.875rem;
+		font-weight: 500;
+		color: #a0a0b0;
+		background: #1a1a2e;
+		border: 2px solid #32303e;
+		border-radius: 8px;
+		cursor: pointer;
+		transition: all 0.15s ease;
+		min-height: 40px;
+	}
+
+	.back-button:hover {
+		border-color: #3b82f6;
+		color: #3b82f6;
+	}
+
+	.back-button:focus {
+		outline: none;
+		border-color: #3b82f6;
+		box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
 	}
 </style>

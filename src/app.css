@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* MS Calculators - Base Styles */
+/* MS Calculators - Base Styles with Galaxy Dark Theme */
 
 @layer base {
 	:root {
@@ -14,11 +14,33 @@
 		--color-danger: #ef4444;
 		--color-info: #3b82f6;
 
+		/* Dynamic accent color (customizable via color picker) */
+		--accent-color: #3b82f6;
+		--accent-color-hover: #1d4ed8;
+		--accent-color-light: rgba(59, 130, 246, 0.2);
+
+		/* Galaxy Dark Theme */
+		--bg-dark: #0d1117;
+		--bg-surface: #1a1a2e;
+		--bg-surface-alt: #16162a;
+		--border-dark: #32303e;
+		--text-primary: #ffffff;
+		--text-secondary: #a0a0b0;
+		--text-muted: #808090;
+
+		/* Brutalist shadows */
+		--shadow-color: #3b82f6;
+
 		/* Touch Targets */
 		--min-touch-target: 44px;
 
 		/* Spacing for mobile */
 		--spacing-mobile: 12px;
+	}
+
+	/* Dark theme as default for Galaxy aesthetic */
+	body.dark-theme {
+		@apply bg-galaxy-dark-900 text-white;
 	}
 
 	body {
@@ -102,6 +124,65 @@
 			animation-iteration-count: 1 !important;
 			transition-duration: 0.01ms !important;
 		}
+	}
+
+	/* ===== GALAXY BRUTALIST COMPONENTS ===== */
+
+	/* Dark themed card */
+	.card-dark {
+		@apply rounded-xl p-5;
+		background: linear-gradient(135deg, #1a1a2e 0%, #16162a 100%);
+		border: 3px solid #32303e;
+		box-shadow: 4px 4px 0 #000;
+	}
+
+	.card-dark-elevated {
+		@apply card-dark;
+		box-shadow:
+			4px 4px 0 #000,
+			8px 8px 20px rgba(0, 0, 0, 0.4);
+	}
+
+	/* Brutalist input dark theme */
+	.input-dark {
+		@apply min-h-[44px] px-4 py-2 rounded-lg;
+		@apply bg-galaxy-dark-800 text-white border-2 border-brutalist-border;
+		@apply focus:outline-none focus:border-neuratos-blue-500;
+		@apply transition-colors duration-200;
+	}
+
+	.input-dark::placeholder {
+		@apply text-gray-500;
+	}
+
+	/* Dark theme text colors */
+	.text-dark-primary {
+		color: #ffffff;
+	}
+
+	.text-dark-secondary {
+		color: #a0a0b0;
+	}
+
+	.text-dark-muted {
+		color: #808090;
+	}
+
+	/* Accent color utilities using CSS custom property */
+	.bg-accent {
+		background-color: var(--accent-color, #3b82f6);
+	}
+
+	.text-accent {
+		color: var(--accent-color, #3b82f6);
+	}
+
+	.border-accent {
+		border-color: var(--accent-color, #3b82f6);
+	}
+
+	.shadow-accent {
+		box-shadow: 6px 6px 0 var(--accent-color, #3b82f6);
 	}
 }
 

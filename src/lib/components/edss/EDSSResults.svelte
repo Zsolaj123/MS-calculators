@@ -7,20 +7,20 @@
 	let functionalSystems = $derived(edssStore.functionalSystems);
 	let ambulation = $derived(edssStore.ambulation);
 
-	// Get color classes based on severity
-	const colorClasses = $derived.by(() => {
-		if (!severityCategory) return 'bg-gray-100 text-gray-800';
+	// Get color styles based on severity for Galaxy dark theme
+	const severityStyles = $derived.by(() => {
+		if (!severityCategory) return { bg: 'rgba(128, 128, 144, 0.1)', border: '#808090', text: '#808090' };
 
-		const colorMap: Record<string, string> = {
-			green: 'bg-green-100 text-green-800 border-green-500',
-			blue: 'bg-blue-100 text-blue-800 border-blue-500',
-			yellow: 'bg-yellow-100 text-yellow-800 border-yellow-500',
-			orange: 'bg-orange-100 text-orange-800 border-orange-500',
-			red: 'bg-red-100 text-red-800 border-red-500',
-			gray: 'bg-gray-100 text-gray-800 border-gray-500'
+		const colorMap: Record<string, { bg: string; border: string; text: string }> = {
+			green: { bg: 'rgba(16, 185, 129, 0.15)', border: '#10b981', text: '#10b981' },
+			blue: { bg: 'rgba(59, 130, 246, 0.15)', border: '#3b82f6', text: '#3b82f6' },
+			yellow: { bg: 'rgba(245, 158, 11, 0.15)', border: '#f59e0b', text: '#f59e0b' },
+			orange: { bg: 'rgba(249, 115, 22, 0.15)', border: '#f97316', text: '#f97316' },
+			red: { bg: 'rgba(239, 68, 68, 0.15)', border: '#ef4444', text: '#ef4444' },
+			gray: { bg: 'rgba(128, 128, 144, 0.15)', border: '#808090', text: '#808090' }
 		};
 
-		return colorMap[severityCategory.color] || 'bg-gray-100 text-gray-800';
+		return colorMap[severityCategory.color] || colorMap.gray;
 	});
 
 	// Get severity icon
@@ -55,17 +55,15 @@
 </script>
 
 <div class="edss-results-container">
-	<div class="results-header mb-8">
-		<h2 class="text-3xl font-bold text-center mb-2 text-neuratos-blue-700 dark:text-neuratos-blue-300">
-			📊 EDSS Eredmény
-		</h2>
-		<p class="text-center text-gray-600 dark:text-gray-400">
+	<div class="results-header">
+		<h2 class="results-title">📊 EDSS Eredmény</h2>
+		<p class="results-subtitle">
 			A beteg jelenlegi fogyatékossági állapotának értékelése
 		</p>
 	</div>
 
 	<!-- Score Display -->
-	<div class="score-card mb-6">
+	<div class="score-card">
 		<div class="score-display">
 			<div class="score-label">EDSS Pontszám</div>
 			<div class="score-value">
@@ -74,11 +72,14 @@
 		</div>
 
 		{#if severityCategory}
-			<div class="severity-badge {colorClasses}">
-				<span class="text-3xl mr-2">{severityIcon}</span>
-				<div>
-					<div class="font-bold text-lg">{severityCategory.label}</div>
-					<div class="text-sm opacity-90">{severityCategory.description}</div>
+			<div
+				class="severity-badge"
+				style="background: {severityStyles.bg}; border-color: {severityStyles.border};"
+			>
+				<span class="severity-icon">{severityIcon}</span>
+				<div class="severity-content">
+					<div class="severity-label" style="color: {severityStyles.text};">{severityCategory.label}</div>
+					<div class="severity-description">{severityCategory.description}</div>
 				</div>
 			</div>
 		{/if}
@@ -86,21 +87,17 @@
 
 	<!-- Interpretation -->
 	{#if interpretation}
-		<div class="interpretation-card mb-6">
-			<h3 class="text-xl font-semibold mb-3 text-neuratos-blue-700 dark:text-neuratos-blue-300">
-				📋 Értelmezés
-			</h3>
-			<p class="text-gray-700 dark:text-gray-300 leading-relaxed">
+		<div class="interpretation-card">
+			<h3 class="card-title">📋 Értelmezés</h3>
+			<p class="interpretation-text">
 				{interpretation}
 			</p>
 		</div>
 	{/if}
 
 	<!-- Functional Systems Summary -->
-	<div class="summary-card mb-6">
-		<h3 class="text-xl font-semibold mb-4 text-neuratos-blue-700 dark:text-neuratos-blue-300">
-			🔍 Funkcionális Rendszerek Összefoglalója
-		</h3>
+	<div class="summary-card">
+		<h3 class="card-title">🔍 Funkcionális Rendszerek Összefoglalója</h3>
 		<div class="systems-grid">
 			<div class="system-item">
 				<span class="system-label">💪 Piramidális:</span>
@@ -138,8 +135,8 @@
 	</div>
 
 	<!-- Reference Note -->
-	<div class="reference-note mb-8">
-		<p class="text-xs text-gray-500 dark:text-gray-400">
+	<div class="reference-note">
+		<p>
 			📚 Referencia: Kurtzke JF. Rating neurologic impairment in multiple sclerosis: an expanded
 			disability status scale (EDSS). Neurology. 1983;33(11):1444-52.
 		</p>
@@ -147,13 +144,13 @@
 
 	<!-- Action Buttons -->
 	<div class="action-buttons">
-		<button onclick={handleBackToAssessment} class="btn btn-secondary flex-1">
+		<button onclick={handleBackToAssessment} class="action-btn secondary">
 			✏️ Értékelés módosítása
 		</button>
-		<button onclick={handleNewAssessment} class="btn btn-secondary flex-1">
+		<button onclick={handleNewAssessment} class="action-btn secondary">
 			🔄 Új értékelés
 		</button>
-		<button onclick={handleExport} class="btn btn-primary flex-1">
+		<button onclick={handleExport} class="action-btn primary">
 			💾 Eredmény exportálása
 		</button>
 	</div>
@@ -161,88 +158,219 @@
 
 <style>
 	.edss-results-container {
-		@apply w-full max-w-4xl mx-auto;
+		width: 100%;
+		max-width: 56rem;
+		margin: 0 auto;
+	}
+
+	.results-header {
+		text-align: center;
+		margin-bottom: 2rem;
+	}
+
+	.results-title {
+		font-size: 1.75rem;
+		font-weight: 700;
+		color: #fff;
+		margin-bottom: 0.5rem;
+	}
+
+	.results-subtitle {
+		font-size: 0.9375rem;
+		color: #808090;
 	}
 
 	.score-card {
-		@apply bg-gradient-to-br from-neuratos-blue-50 to-neuratos-blue-100 dark:from-gray-800 dark:to-gray-900;
-		@apply rounded-xl p-8 shadow-lg border-2 border-neuratos-blue-300;
+		background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(59, 130, 246, 0.05) 100%);
+		border: 2px solid rgba(59, 130, 246, 0.3);
+		border-radius: 16px;
+		padding: 2rem;
+		margin-bottom: 1.5rem;
 	}
 
 	.score-display {
-		@apply text-center mb-6;
+		text-align: center;
+		margin-bottom: 1.5rem;
 	}
 
 	.score-label {
-		@apply text-sm text-gray-600 dark:text-gray-400 uppercase tracking-wide mb-2;
+		font-size: 0.875rem;
+		color: #808090;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		margin-bottom: 0.5rem;
 	}
 
 	.score-value {
-		@apply text-7xl font-bold text-neuratos-blue-700 dark:text-neuratos-blue-300 tabular-nums;
+		font-size: 5rem;
+		font-weight: 700;
+		color: #3b82f6;
+		font-variant-numeric: tabular-nums;
+		line-height: 1;
 	}
 
 	.severity-badge {
-		@apply p-4 rounded-lg border-l-4 flex items-center;
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+		padding: 1rem 1.25rem;
+		border-radius: 10px;
+		border-left: 4px solid;
 	}
 
-	.interpretation-card {
-		@apply bg-white dark:bg-gray-800 rounded-lg p-6 shadow-md;
-		@apply border border-gray-200 dark:border-gray-700;
+	.severity-icon {
+		font-size: 2rem;
+		flex-shrink: 0;
 	}
 
+	.severity-content {
+		flex: 1;
+	}
+
+	.severity-label {
+		font-size: 1.125rem;
+		font-weight: 700;
+		margin-bottom: 0.25rem;
+	}
+
+	.severity-description {
+		font-size: 0.875rem;
+		color: #a0a0b0;
+	}
+
+	.interpretation-card,
 	.summary-card {
-		@apply bg-white dark:bg-gray-800 rounded-lg p-6 shadow-md;
-		@apply border border-gray-200 dark:border-gray-700;
+		background: #0f172a;
+		border: 2px solid #32303e;
+		border-radius: 12px;
+		padding: 1.5rem;
+		margin-bottom: 1.5rem;
+	}
+
+	.card-title {
+		font-size: 1.125rem;
+		font-weight: 600;
+		color: #fff;
+		margin-bottom: 1rem;
+	}
+
+	.interpretation-text {
+		font-size: 0.9375rem;
+		color: #a0a0b0;
+		line-height: 1.6;
 	}
 
 	.systems-grid {
-		@apply grid grid-cols-2 gap-3;
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		gap: 0.75rem;
 	}
 
 	.system-item {
-		@apply flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-900 rounded-lg;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 0.875rem 1rem;
+		background: #161b22;
+		border-radius: 8px;
 	}
 
 	.system-item.ambulation-item {
-		@apply col-span-2 bg-neuratos-blue-50 dark:bg-neuratos-blue-900 border border-neuratos-blue-200;
+		grid-column: span 2;
+		background: rgba(59, 130, 246, 0.1);
+		border: 1px solid rgba(59, 130, 246, 0.3);
 	}
 
 	.system-label {
-		@apply text-sm font-medium text-gray-700 dark:text-gray-300;
+		font-size: 0.875rem;
+		font-weight: 500;
+		color: #a0a0b0;
 	}
 
 	.system-value {
-		@apply text-lg font-bold text-neuratos-blue-600 dark:text-neuratos-blue-400;
+		font-size: 1.125rem;
+		font-weight: 700;
+		color: #3b82f6;
 	}
 
 	.reference-note {
-		@apply text-center italic p-4 bg-gray-50 dark:bg-gray-900 rounded-lg;
+		text-align: center;
+		padding: 1rem;
+		background: #161b22;
+		border-radius: 8px;
+		margin-bottom: 2rem;
+	}
+
+	.reference-note p {
+		font-size: 0.75rem;
+		color: #808090;
+		font-style: italic;
 	}
 
 	.action-buttons {
-		@apply flex gap-4;
+		display: flex;
+		gap: 1rem;
+	}
+
+	.action-btn {
+		flex: 1;
+		padding: 0.875rem 1.5rem;
+		font-size: 0.9375rem;
+		font-weight: 600;
+		border-radius: 10px;
+		cursor: pointer;
+		transition: all 0.15s ease;
+		min-height: 48px;
+	}
+
+	.action-btn.primary {
+		background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+		color: #fff;
+		border: none;
+	}
+
+	.action-btn.primary:hover {
+		box-shadow: 0 4px 14px rgba(59, 130, 246, 0.3);
+	}
+
+	.action-btn.secondary {
+		background: transparent;
+		color: #a0a0b0;
+		border: 2px solid #32303e;
+	}
+
+	.action-btn.secondary:hover {
+		border-color: #3b82f6;
+		color: #3b82f6;
 	}
 
 	/* Mobile optimizations */
 	@media (max-width: 640px) {
 		.score-card {
-			@apply p-6;
+			padding: 1.5rem;
 		}
 
 		.score-value {
-			@apply text-6xl;
+			font-size: 4rem;
 		}
 
 		.systems-grid {
-			@apply grid-cols-1;
+			grid-template-columns: 1fr;
 		}
 
 		.system-item.ambulation-item {
-			@apply col-span-1;
+			grid-column: span 1;
 		}
 
 		.action-buttons {
-			@apply flex-col;
+			flex-direction: column;
+		}
+	}
+
+	/* Reduced motion */
+	@media (prefers-reduced-motion: reduce) {
+		.action-btn {
+			transition: none;
 		}
 	}
 </style>
