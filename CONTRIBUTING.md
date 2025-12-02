@@ -18,7 +18,7 @@ Thank you for your interest in contributing! This document provides guidelines f
 
 #### Reporting Bugs
 
-1. Check if the issue already exists in [GitHub Issues](https://github.com/YOUR_USERNAME/MS-calculators/issues)
+1. Check if the issue already exists in [GitHub Issues](https://github.com/Zsolaj123/MS-calculators/issues)
 2. If not, create a new issue with:
    - Clear, descriptive title
    - Steps to reproduce
@@ -45,8 +45,8 @@ Thank you for your interest in contributing! This document provides guidelines f
 ### Development Setup
 
 ```bash
-# Clone your fork
-git clone https://github.com/YOUR_USERNAME/MS-calculators.git
+# Clone the repository (or your fork)
+git clone https://github.com/Zsolaj123/MS-calculators.git
 cd MS-calculators
 
 # Install dependencies
@@ -164,7 +164,7 @@ When contributing clinical features:
 
 #### Hibák jelentése
 
-1. Ellenőrizd, hogy a probléma már létezik-e a [GitHub Issues](https://github.com/YOUR_USERNAME/MS-calculators/issues) oldalon
+1. Ellenőrizd, hogy a probléma már létezik-e a [GitHub Issues](https://github.com/Zsolaj123/MS-calculators/issues) oldalon
 2. Ha nem, hozz létre új issue-t:
    - Világos, leíró cím
    - Reprodukálási lépések
@@ -191,8 +191,8 @@ When contributing clinical features:
 ### Fejlesztési beállítás
 
 ```bash
-# Fork klónozása
-git clone https://github.com/FELHASZNÁLÓNÉV/MS-calculators.git
+# Repository klónozása (vagy a fork-od)
+git clone https://github.com/Zsolaj123/MS-calculators.git
 cd MS-calculators
 
 # Függőségek telepítése

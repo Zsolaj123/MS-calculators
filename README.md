@@ -49,7 +49,7 @@ Neuratos MS™ Calculators is a modern, accessible web application for clinical 
 
 ```bash
 # Clone the repository
-git clone https://github.com/YOUR_USERNAME/MS-calculators.git
+git clone https://github.com/Zsolaj123/MS-calculators.git
 cd MS-calculators
 
 # Install dependencies
@@ -187,7 +187,7 @@ A Neuratos MS™ Calculators egy modern, akadálymentes webalkalmazás klinikai 
 
 ```bash
 # Repository klónozása
-git clone https://github.com/YOUR_USERNAME/MS-calculators.git
+git clone https://github.com/Zsolaj123/MS-calculators.git
 cd MS-calculators
 
 # Függőségek telepítése
