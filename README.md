@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="static/neuratos-logo.png" alt="Neuratos Logo" width="200"/>
+</p>
+
 # Neuratos MS™ Calculators
 
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
@@ -7,8 +11,13 @@
 [![SvelteKit](https://img.shields.io/badge/SvelteKit-2-FF3E00?logo=svelte&logoColor=white)](https://kit.svelte.dev/)
 [![WCAG AAA](https://img.shields.io/badge/WCAG-AAA-4A90A4?logo=accessibility&logoColor=white)](https://www.w3.org/WAI/WCAG21/quickref/)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
+[![Work In Progress](https://img.shields.io/badge/Status-Work%20In%20Progress-yellow.svg)](https://github.com/Zsolaj123/MS-calculators)
 
 **A comprehensive Multiple Sclerosis assessment toolkit with BICAMS normalization**
+
+> **Note:** Neuratos MS™ is a **work-in-progress project**. Features are actively being developed and may change. Contributions and feedback are welcome!
+>
+> **Megjegyzés:** A Neuratos MS™ egy **folyamatban lévő projekt**. A funkciók aktív fejlesztés alatt állnak és változhatnak. Hozzájárulásokat és visszajelzéseket szívesen fogadunk!
 
 *Magyar verzió lentebb / Hungarian version below*
 
