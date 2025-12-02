@@ -10,13 +10,24 @@
 		language?: SpeechRecognitionLanguage;
 		disabled?: boolean;
 		maxDigit?: number;
+		// Callbacks for timer pause functionality (live test mode)
+		onConfirmStart?: () => void;
+		onConfirmEnd?: () => void;
 	}
 
-	let { onResult, language = 'hu-HU', disabled = false, maxDigit = 9 }: Props = $props();
+	let {
+		onResult,
+		language = 'hu-HU',
+		disabled = false,
+		maxDigit = 9,
+		onConfirmStart,
+		onConfirmEnd
+	}: Props = $props();
 
 	let isListening = $state(false);
 	let transcript = $state('');
 	let interimTranscript = $state('');
+	let interimDigit = $state<number | null>(null); // Immediate interim digit display
 	let error = $state<string | null>(null);
 	let showConfirm = $state(false);
 	let recognizedDigit = $state<number | null>(null);
@@ -30,12 +41,20 @@
 		service.setLanguage(language);
 	});
 
+	// Notify parent when confirmation panel shows/hides (for timer pause)
+	$effect(() => {
+		if (showConfirm) {
+			onConfirmStart?.();
+		}
+	});
+
 	function startListening() {
 		if (!isSupported || disabled || isListening) return;
 
 		error = null;
 		transcript = '';
 		interimTranscript = '';
+		interimDigit = null;
 		showConfirm = false;
 		recognizedDigit = null;
 		isEditing = false;
@@ -45,6 +64,7 @@
 				if (result.isFinal) {
 					transcript = result.transcript;
 					interimTranscript = '';
+					interimDigit = null;
 
 					// Try to parse the number
 					const digit = SpeechRecognitionService.parseNumber(transcript, language);
@@ -59,6 +79,11 @@
 					}
 				} else {
 					interimTranscript = result.transcript;
+					// Immediately try to show recognized digit for faster feedback
+					const digit = SpeechRecognitionService.parseNumber(result.transcript, language);
+					if (digit !== null && digit >= 1 && digit <= maxDigit) {
+						interimDigit = digit;
+					}
 				}
 			},
 			(err) => {
@@ -82,17 +107,25 @@
 		if (recognizedDigit !== null) {
 			onResult(recognizedDigit);
 			resetState();
+			// Auto-restart listening for faster continuous input
+			setTimeout(() => startListening(), 100);
 		}
 	}
 
 	function resetState() {
+		const wasConfirming = showConfirm;
 		showConfirm = false;
 		recognizedDigit = null;
 		transcript = '';
 		interimTranscript = '';
+		interimDigit = null;
 		error = null;
 		isEditing = false;
 		editValue = '';
+		// Notify parent that confirmation ended (to resume timer)
+		if (wasConfirming) {
+			onConfirmEnd?.();
+		}
 	}
 
 	function startEdit() {
@@ -248,8 +281,16 @@
 			</span>
 		</button>
 
-		{#if interimTranscript && isListening}
-			<p class="interim-text">{interimTranscript}</p>
+		{#if isListening}
+			{#if interimDigit !== null}
+				<!-- Immediate digit feedback while speaking -->
+				<div class="interim-digit">
+					<span class="interim-digit-value">{interimDigit}</span>
+					<span class="interim-digit-label">{interimTranscript}</span>
+				</div>
+			{:else if interimTranscript}
+				<p class="interim-text">{interimTranscript}</p>
+			{/if}
 		{/if}
 
 		{#if error}
@@ -389,6 +430,43 @@
 		color: #a0a0b0;
 		font-style: italic;
 		animation: fade-in 0.2s ease;
+	}
+
+	/* Immediate Digit Feedback */
+	.interim-digit {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 0.25rem;
+		padding: 0.75rem 1.5rem;
+		background: rgba(16, 185, 129, 0.1);
+		border: 2px solid rgba(16, 185, 129, 0.4);
+		border-radius: 12px;
+		animation: pulse-glow 0.5s ease-in-out infinite alternate;
+	}
+
+	.interim-digit-value {
+		font-size: 3rem;
+		font-weight: 700;
+		color: #10b981;
+		line-height: 1;
+	}
+
+	.interim-digit-label {
+		font-size: 0.75rem;
+		color: #808090;
+		font-style: italic;
+	}
+
+	@keyframes pulse-glow {
+		from {
+			border-color: rgba(16, 185, 129, 0.4);
+			box-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
+		}
+		to {
+			border-color: rgba(16, 185, 129, 0.7);
+			box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+		}
 	}
 
 	/* Error Text */
@@ -574,7 +652,8 @@
 	@media (prefers-reduced-motion: reduce) {
 		.voice-button,
 		.mic-icon.active,
-		.pulse-ring {
+		.pulse-ring,
+		.interim-digit {
 			animation: none;
 		}
 		.voice-button:hover:not(:disabled) {

@@ -58,6 +58,21 @@
 		}
 	}
 
+	// Voice input confirmation handlers (pause timer during confirmation in live test)
+	function handleVoiceConfirmStart() {
+		// Only pause timer in live test mode (not practice)
+		if (!isPractice && !isPaused) {
+			sdmtStore.pauseTest();
+		}
+	}
+
+	function handleVoiceConfirmEnd() {
+		// Resume timer after voice confirmation
+		if (!isPractice && isPaused) {
+			sdmtStore.resumeTest();
+		}
+	}
+
 	onMount(() => {
 		window.addEventListener('keydown', handleKeydown);
 	});
@@ -128,11 +143,8 @@
 				</div>
 			{/if}
 		</div>
-		<div class="status-right">
-			<div class="score">
-				✓ {currentScore}
-			</div>
-		</div>
+		<!-- Score removed from live display - only shown in results -->
+		<div class="status-right"></div>
 	</div>
 
 	<!-- Middle Section: Current Symbol -->
@@ -171,6 +183,8 @@
 					language={voiceLanguage}
 					disabled={isPaused}
 					maxDigit={symbolCount}
+					onConfirmStart={handleVoiceConfirmStart}
+					onConfirmEnd={handleVoiceConfirmEnd}
 				/>
 			</div>
 		{:else}
@@ -231,13 +245,33 @@
 		@apply border border-gray-200 dark:border-gray-600;
 	}
 
-	/* Increased by 35%+: 40px → 56px */
+	/* Increased by 35%+: 40px → 56px - Standardized sizing */
 	.key-symbol {
 		@apply w-14 h-14 mb-1;
+		@apply flex items-center justify-center;
+		/* Force consistent box for all symbols */
+		overflow: hidden;
 	}
 
 	.key-symbol :global(svg) {
-		@apply w-full h-full;
+		width: 100%;
+		height: 100%;
+		/* Ensure all symbols fill the same visual space */
+		min-width: 100%;
+		min-height: 100%;
+		/* Consistent stroke width for drawn shapes */
+		stroke-width: 10;
+		/* Ensure SVG fills container */
+		display: block;
+	}
+
+	/* Ensure consistent visual sizing for all symbol types (Unicode text) */
+	.key-symbol :global(svg text) {
+		/* Make Unicode text symbols larger to match drawn shapes */
+		font-size: 90px !important;
+		font-weight: 700 !important;
+		/* Adjust vertical position for larger font */
+		dominant-baseline: central;
 	}
 
 	/* Color scheme for symbols in key */
