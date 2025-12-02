@@ -1,17 +1,49 @@
-.DS_Store
+# Dependencies
 node_modules
+.pnpm-store
+
+# Build outputs
 /build
 /.svelte-kit
 /package
+/dist
+
+# Environment files
 .env
 .env.*
 !.env.example
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Vite
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
-dist
+
+# Deployment
 .vercel
 .output
 .turbo
+.netlify
+
+# Logs
 *.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Testing
 playwright-report
 test-results
+coverage
+
+# Misc
+*.tgz
+.cache
